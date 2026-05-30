@@ -6,7 +6,15 @@ CRANE helps manufacturers of products with digital elements meet their CRA oblig
 
 ---
 Control CRA compliance via an up-to-date dashboard with the most important information
+
 ![CRANE Dashboard](.github/assets/Main_dashboard.png)
+
+---
+
+Comprehensive overview of the products with required CRA properties and justifications
+
+![CRANE Dashboard](.github/assets/productInventory.png)
+
 
 ---
 
