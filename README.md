@@ -78,27 +78,34 @@ Default admin credentials are printed in the backend logs on first run.
 
 ---
 
-## Roadmap
+# CRANE Roadmap
 
-### Near term
-- [ ] PDF compliance report export — audit-ready package for Notified Body submissions
-- [ ] Email notifications — EOS alerts, vulnerability digest, gate approvals
-- [ ] GitHub / GitLab OAuth login
-- [ ] Password reset via email
+```mermaid
+flowchart LR
 
-### Medium term
-- [ ] Multi-tenant support — manage multiple organisations from one instance
-- [ ] Jira / GitHub Issues integration — sync vulnerabilities to your issue tracker
-- [ ] REST API webhooks — push compliance events to external systems
-- [ ] CRA Article 14 incident reporting workflow
+    subgraph NT["🚀 Near Term"]
+        NT1["PDF compliance report export"]
+        NT2["Email notifications"]
+        NT3["GitHub / GitLab OAuth login"]
+        NT4["Password reset via email"]
+    end
 
-### Long term
-- [ ] Railway sector overlay (NIS2, CENELEC EN 50128 / EN 50657)
-- [ ] IEC 62443 requirement mapping
-- [ ] AI-assisted risk assessment suggestions
-- [ ] Marketplace for sector-specific compliance templates
+    subgraph MT["📈 Medium Term"]
+        MT1["Multi-tenant support"]
+        MT2["Jira / GitHub Issues integration"]
+        MT3["REST API webhooks"]
+        MT4["CRA Article 14 incident reporting"]
+    end
 
----
+    subgraph LT["🎯 Long Term"]
+        LT1["Railway sector overlay"]
+        LT2["IEC 62443 mapping"]
+        LT3["AI-assisted risk assessment"]
+        LT4["Compliance template marketplace"]
+    end
+
+    NT --> MT --> LT
+```
 
 ## Self-hosted by design
 
