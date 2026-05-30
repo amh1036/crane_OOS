@@ -79,34 +79,42 @@ Default admin credentials are printed in the backend logs on first run.
 ---
 
 # CRANE Roadmap
+<table>
+<tr>
+<td width="33%" valign="top">
 
-```mermaid
-flowchart LR
+### 🚀 Near Term
+&nbsp;
+- [ ] PDF compliance report export
+- [ ] Email notifications (EOS alerts, gate approvals)
+- [ ] GitHub / GitLab OAuth login
+- [ ] Password reset via email
 
-    subgraph NT["🚀 Near Term"]
-        NT1["PDF compliance report export"]
-        NT2["Email notifications"]
-        NT3["GitHub / GitLab OAuth login"]
-        NT4["Password reset via email"]
-    end
+</td>
+<td width="33%" valign="top">
 
-    subgraph MT["📈 Medium Term"]
-        MT1["Multi-tenant support"]
-        MT2["Jira / GitHub Issues integration"]
-        MT3["REST API webhooks"]
-        MT4["CRA Article 14 incident reporting"]
-    end
+### 📈 Medium Term
+&nbsp;
+- [ ] Multi-tenant support
+- [ ] Jira / GitHub Issues integration
+- [ ] REST API webhooks
+- [ ] CRA Article 14 incident reporting
 
-    subgraph LT["🎯 Long Term"]
-        LT1["Railway sector overlay"]
-        LT2["IEC 62443 mapping"]
-        LT3["AI-assisted risk assessment"]
-        LT4["Compliance template marketplace"]
-    end
+</td>
+<td width="33%" valign="top">
 
-    NT --> MT --> LT
-```
+### 🎯 Long Term
+&nbsp;
+- [ ] Railway sector overlay (NIS2, CENELEC)
+- [ ] IEC 62443 requirement mapping
+- [ ] AI-assisted risk assessment
+- [ ] Compliance template marketplace
 
+</td>
+</tr>
+</table>
+
+---
 ## Self-hosted by design
 
 - All data stays in your own PostgreSQL instance
