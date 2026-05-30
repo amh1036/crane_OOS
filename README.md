@@ -134,11 +134,14 @@ docker compose up -d
 | API | http://localhost:8000/api/v1 |
 | API docs | http://localhost:8000/docs |
 
-The default admin account (`admin@crane.local`) and its initial password are printed in the backend container logs on first run:
+Default admin credentials created on first run:
 
-```bash
-docker compose logs backend | grep "Admin account"
-```
+| Field | Value |
+|---|---|
+| Email | `admin@example.com` |
+| Password | `admin1234` |
+
+You will be prompted to change the password immediately on first login.
 
 ---
 
