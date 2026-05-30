@@ -30,20 +30,79 @@ Comprehensive overview of the products with required CRA properties and justific
 
 ---
 
+## Real-world scenarios
+
+### 🏭 Industrial IoT Manufacturer
+
+A manufacturer of connected sensors deployed in factories across the EU needs to demonstrate CRA compliance before placing products on the market.
+
+**With CRANE:**
+- Registers each sensor model as a product with hardware and firmware versions
+- Uploads CycloneDX SBOMs per firmware release — CRANE scores quality and validates CRA requirements
+- Runs vulnerability scans via Trivy and OSV; EPSS scores prioritise which CVEs to fix first
+- Configures a release gate requiring a passed risk assessment, pentest report, and SBOM before any firmware ships
+- Defines a support period per product line with automated end-of-support alerts to customers
+- Exports a complete audit package when the Notified Body requests evidence
+
+---
+
+### 💡 Small IoT Startup
+
+A 10-person startup ships a smart energy monitor for residential use. They have no dedicated compliance team and CRA is their first regulatory challenge.
+
+**With CRANE:**
+- Sets up the product registry in under an hour using Docker Compose — no infrastructure expertise needed
+- Uploads their first SBOM and immediately sees which open source components carry known CVEs
+- Uses the CRA Annex I matrix to understand which obligations apply and track progress against each one
+- Classifies their cloud backend using the Article 3(2) wizard — determines it is in scope and documents the rationale
+- Publishes a CVD policy so security researchers know how to report vulnerabilities responsibly
+- When a critical CVE hits a dependency, the team logs the vulnerability report, patches it, issues a security update, and has a full audit trail — all in one place
+- Downloads technical documentation needed for internal conformity assessment and CE marking
+
+---
+
+### 🧑‍💼 CRA Compliance Consultant
+
+A consultant runs CRA programmes for five SME clients simultaneously. Each client needs their own compliant product registry and evidence trail.
+
+**With CRANE:**
+- Deploys one self-hosted CRANE instance per client — fully isolated data, no cross-contamination
+- Uses role-based access control to give each client's team read access while retaining admin control
+- Assesses remote processing elements (cloud backends, update servers) against CRA Article 3(2) using the built-in DIGITALEUROPE I1/I3/I5/I6 classification wizard
+- Exports the complete dataset at project close — client takes ownership with no vendor lock-in
+- Uses test-data fixtures to demonstrate the tool during CRA awareness workshops
+- All instances are AGPL-licensed — no per-seat or per-client licensing costs
+
+---
+
+### 🎓 Training & Research
+
+A training running a cybersecurity engineering course uses CRANE to teach students how CRA compliance works in practice — not just in theory.
+
+**With CRANE:**
+- Spins up a shared instance for the class in minutes — students get individual accounts with scoped roles
+- Each student team registers a fictional product and works through the full compliance lifecycle: SBOM, risk assessment, vulnerability handling, release gate
+- Instructors use the audit log to review every action taken by each team — traceable, timestamped, tamper-evident
+- Researchers studying EU product regulation use CRANE as a live reference implementation of CRA Article 3, Annex I, and Annex II obligations
+- Fully open source and free — no licensing barriers for training use
+
+---
 ## Features
 
 | Area | What it does |
 |---|---|
 | **Product registry** | Track products, versions, releases, and support periods |
 | **Release gates** | Structured readiness checklist with evidence before every release |
-| **SBOM analysis** | Quality scoring, CRA Phase 2 validation, NTIA compliance, diff view |
+| **SBOM analysis** | Quality scoring, CRA validation, NTIA compliance, diff view |
 | **Vulnerability management** | PSIRT workflow, CVE tracking, EPSS scoring, VEX assessments |
 | **Security operations** | Advisories, CVD policies, update history, incoming report triage |
 | **Risk assessments** | STRIDE / TARA / custom methodology, approval workflow |
 | **CRA Annex I matrix** | Requirement coverage map per product with evidence links |
-| **Substantial changes** | Article 3(4) change assessment and re-conformity tracking |
+| **Substantial changes** | Change assessment and re-conformity tracking |
 | **Lifecycle alerts** | End-of-support monitoring with configurable thresholds |
 | **Audit trail** | Immutable, timestamped log of every action |
+| **Technical documentation ready** | one click export of technical documentation|
+| **Team collaboration** | multi-user platform, task defintion feature, commenting|
 | **RBAC + LDAP** | Role-based access control, Active Directory / OpenLDAP integration |
 
 ---
@@ -85,9 +144,9 @@ Default admin credentials are printed in the backend logs on first run.
 
 ### 🚀 Near Term
 &nbsp;
-- [ ] PDF compliance report export
+- [ ] Full-compliant with CRA reporting obligatons before 11 September 2026
 - [ ] Email notifications (EOS alerts, gate approvals)
-- [ ] GitHub / GitLab OAuth login
+- [ ] GitHub / GitLab integration
 - [ ] Password reset via email
 
 </td>
@@ -95,9 +154,9 @@ Default admin credentials are printed in the backend logs on first run.
 
 ### 📈 Medium Term
 &nbsp;
-- [ ] Multi-tenant support
+- [ ] Integration of CENELEC vertical and horizontal standards 
 - [ ] Jira / GitHub Issues integration
-- [ ] REST API webhooks
+- [ ] Multi-tenant support
 - [ ] CRA Article 14 incident reporting
 
 </td>
@@ -105,10 +164,7 @@ Default admin credentials are printed in the backend logs on first run.
 
 ### 🎯 Long Term
 &nbsp;
-- [ ] Railway sector overlay (NIS2, CENELEC)
-- [ ] IEC 62443 requirement mapping
-- [ ] AI-assisted risk assessment
-- [ ] Compliance template marketplace
+- Community will decide
 
 </td>
 </tr>
