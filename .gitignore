@@ -1,0 +1,57 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+.env.render
+.env.production
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+docs/node_modules/
+docs/build/
+docs/.docusaurus/
+
+# Generated files
+sbom*.json
+PentestReport.md
+
+# Claude internal data
+.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Cache
+.pytest_cache/
+.docusaurus/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (runtime data, not source)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Docker
+*.log
+.env.render
