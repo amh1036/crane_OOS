@@ -548,7 +548,7 @@
           <label class="field">
             <span class="field-label">Current classification</span>
             <select v-model="editForm.current_classification">
-              <option value="normal">Normal</option>
+              <option value="normal">Default</option>
               <option value="important_class_1">Important Class I</option>
               <option value="important_class_2">Important Class II</option>
               <option value="critical">Critical</option>
@@ -852,7 +852,7 @@
           <label class="field">
             <span class="field-label">Classification snapshot</span>
             <select v-model="releaseForm.classification_snapshot">
-              <option value="normal">Normal</option>
+              <option value="normal">Default</option>
               <option value="important_class_1">Important Class I</option>
               <option value="important_class_2">Important Class II</option>
               <option value="critical">Critical</option>
@@ -1920,7 +1920,7 @@ function formatClassification(value: ProductClassification): string {
     case "important_class_1": return "Important Class I";
     case "important_class_2": return "Important Class II";
     case "critical":          return "Critical";
-    default:                  return "Normal";
+    default:                  return "Default";
   }
 }
 
