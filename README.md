@@ -5,8 +5,8 @@
 CRANE helps manufacturers of products with digital elements meet their CRA obligations — from SBOM analysis and vulnerability tracking to release gates and lifecycle notifications — in one auditable, self-hosted platform.
 
 ---
-
-![CRANE Dashboard](.github/assets/dashboard.png)
+Control CRA compliance via an up-to-date dashboard with the most important information
+![CRANE Dashboard](.github/assets/Screenshot from 2026-05-31 00-26-06.png)
 
 ---
 
