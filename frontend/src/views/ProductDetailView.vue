@@ -2124,7 +2124,7 @@ async function generateSupportSnippets(): Promise<void> {
       support_start_date:                  supportForm.support_start_date,
       support_end_date:                    supportForm.support_end_date,
       support_type:                        supportForm.support_type,
-      justification_text:                  supportForm.justification_text.trim(),
+      justification_text:                  supportForm.justification_text.trim() || null,
       expected_use_time_text:              supportForm.expected_use_time_text.trim() || null,
       comparable_products_text:            supportForm.comparable_products_text.trim() || null,
       third_party_support_constraints_text:
@@ -2158,7 +2158,7 @@ async function saveSupportPeriod(): Promise<void> {
         notify_before_days:                  supportForm.notify_before_days,
         support_type:                        supportForm.support_type,
         recipient_user_ids:                  supportForm.recipient_user_ids,
-        justification_text:                  supportForm.justification_text.trim(),
+        justification_text:                  supportForm.justification_text.trim() || null,
         expected_use_time_text:              supportForm.expected_use_time_text.trim() || null,
         comparable_products_text:            supportForm.comparable_products_text.trim() || null,
         third_party_support_constraints_text:
@@ -2178,7 +2178,7 @@ async function saveSupportPeriod(): Promise<void> {
         notify_before_days:                  supportForm.notify_before_days,
         support_type:                        supportForm.support_type,
         recipient_user_ids:                  supportForm.recipient_user_ids,
-        justification_text:                  supportForm.justification_text.trim(),
+        justification_text:                  supportForm.justification_text.trim() || null,
         expected_use_time_text:              supportForm.expected_use_time_text.trim() || null,
         comparable_products_text:            supportForm.comparable_products_text.trim() || null,
         third_party_support_constraints_text:
