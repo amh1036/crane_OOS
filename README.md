@@ -1,20 +1,28 @@
 # CRANE — CRA Norm Engine
 
+![License](https://img.shields.io/badge/license-AGPL--3.0-green)
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Vue](https://img.shields.io/badge/vue-3-brightgreen)
+![Docker](https://img.shields.io/badge/docker-compose-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+
 **Self-hosted compliance management for the EU Cyber Resilience Act.**
 
 CRANE helps manufacturers of products with digital elements meet their CRA obligations — from SBOM analysis and vulnerability tracking to release gates and lifecycle notifications — in one auditable, self-hosted platform.
 
+> **Maturity:** CRANE is in active development and used in real compliance engagements. Core modules are stable. Some advanced features are still evolving. Not yet recommended for fully unattended production use without technical oversight.
+
 ---
-Control CRA compliance via an up-to-date dashboard with the most important information
+
+Control CRA compliance via an up-to-date dashboard with the most important information.
 
 ![CRANE Dashboard](.github/assets/Main_dashboard.png)
 
 ---
 
-Comprehensive overview of the products with required CRA properties and justifications
+Comprehensive overview of products with required CRA properties and justifications.
 
-![CRANE Dashboard](.github/assets/productInventory.png)
-
+![Product Inventory](.github/assets/productInventory.png)
 
 ---
 
@@ -77,7 +85,7 @@ A consultant runs CRA programmes for five SME clients simultaneously. Each clien
 
 ### 🎓 Training & Research
 
-A training running a cybersecurity engineering course uses CRANE to teach students how CRA compliance works in practice — not just in theory.
+A training provider running a cybersecurity engineering course uses CRANE to teach students how CRA compliance works in practice — not just in theory.
 
 **With CRANE:**
 - Spins up a shared instance for the class in minutes — students get individual accounts with scoped roles
@@ -87,6 +95,7 @@ A training running a cybersecurity engineering course uses CRANE to teach studen
 - Fully open source and free — no licensing barriers for training use
 
 ---
+
 ## Features
 
 | Area | What it does |
@@ -101,21 +110,21 @@ A training running a cybersecurity engineering course uses CRANE to teach studen
 | **Substantial changes** | Change assessment and re-conformity tracking |
 | **Lifecycle alerts** | End-of-support monitoring with configurable thresholds |
 | **Audit trail** | Immutable, timestamped log of every action |
-| **Technical documentation ready** | one click export of technical documentation|
-| **Team collaboration** | multi-user platform, task defintion feature, commenting|
+| **Technical documentation** | One-click export ready for conformity assessment |
+| **Team collaboration** | Multi-user platform, task assignment, commenting |
 | **RBAC + LDAP** | Role-based access control, Active Directory / OpenLDAP integration |
 
 ---
 
 ## Quick Start
 
-**Prerequisites:** Docker and Docker Compose.
+**Prerequisites:** Docker and Docker Compose. Minimum 2 GB RAM, 5 GB disk.
 
 ```bash
 git clone https://github.com/cra-norm-engine/crane.git
 cd crane
 cp .env.example .env
-# Set BACKEND_SECRET_KEY and POSTGRES_PASSWORD in .env
+# Edit .env — set BACKEND_SECRET_KEY (min 32 chars) and POSTGRES_PASSWORD
 docker compose up -d
 ```
 
@@ -125,7 +134,11 @@ docker compose up -d
 | API | http://localhost:8000/api/v1 |
 | API docs | http://localhost:8000/docs |
 
-Default admin credentials are printed in the backend logs on first run.
+The default admin account (`admin@crane.local`) and its initial password are printed in the backend container logs on first run:
+
+```bash
+docker compose logs backend | grep "Admin account"
+```
 
 ---
 
@@ -137,40 +150,42 @@ Default admin credentials are printed in the backend logs on first run.
 
 ---
 
-# CRANE Roadmap
+## Roadmap
+
 <table>
 <tr>
 <td width="33%" valign="top">
 
 ### 🚀 Near Term
 &nbsp;
-- [ ] Full-compliant with CRA reporting obligatons before 11 September 2026
+- [ ] Full compliance with CRA reporting obligations before 11 September 2026
 - [ ] Email notifications (EOS alerts, gate approvals)
 - [ ] GitHub / GitLab integration
-- [ ] Password reset via email
 
 </td>
 <td width="33%" valign="top">
 
 ### 📈 Medium Term
 &nbsp;
-- [ ] Integration of CENELEC vertical and horizontal standards 
+- [ ] Integration of CENELEC vertical and horizontal standards
 - [ ] Jira / GitHub Issues integration
 - [ ] Multi-tenant support
-- [ ] CRA Article 14 incident reporting
 
 </td>
 <td width="33%" valign="top">
 
 ### 🎯 Long Term
 &nbsp;
-- Community will decide
+- [ ] Formalised conformity reasoning
+- [ ] AI integration
+- [ ] Optimisation and performance
 
 </td>
 </tr>
 </table>
 
 ---
+
 ## Self-hosted by design
 
 - All data stays in your own PostgreSQL instance
@@ -180,13 +195,17 @@ Default admin credentials are printed in the backend logs on first run.
 
 ---
 
+## Contact
+
+- **Issues & feature requests:** [GitHub Issues](https://github.com/cra-norm-engine/crane/issues)
+- **Security vulnerabilities:** See [SECURITY.md](SECURITY.md)
+- **General enquiries:** cra.norm.engine@gmail.com
+
+---
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Please open an issue before submitting a PR for significant changes.
-
-## Security
-
-To report a vulnerability privately, see [SECURITY.md](SECURITY.md).
 
 ## License
 
