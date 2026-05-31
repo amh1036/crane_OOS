@@ -118,15 +118,39 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Quick Start
 
-**Prerequisites:** Docker and Docker Compose. Minimum 2 GB RAM, 5 GB disk.
+**Only prerequisite: [Docker Desktop](https://docs.docker.com/get-docker/) installed and running.**
+
+### Linux / macOS
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
+```
+
+The installer downloads CRANE, generates a secure `.env` configuration automatically, and starts all services. **First run takes 3–5 minutes** while Docker builds the backend image and downloads the vulnerability database.
+
+### Manual installation
+
+<details>
+<summary>Click to expand</summary>
 
 ```bash
 git clone https://github.com/cra-norm-engine/crane.git
 cd crane
 cp .env.example .env
 # Edit .env — set BACKEND_SECRET_KEY (min 32 chars) and POSTGRES_PASSWORD
+# Generate a key: openssl rand -hex 32
 docker compose up -d
 ```
+
+</details>
+
+### Access the app
 
 | Service | URL |
 |---|---|
@@ -134,14 +158,14 @@ docker compose up -d
 | API | http://localhost:8000/api/v1 |
 | API docs | http://localhost:8000/docs |
 
-Default admin credentials created on first run:
+### Default login
 
 | Field | Value |
 |---|---|
 | Email | `admin@example.com` |
 | Password | `admin1234` |
 
-You will be prompted to change the password immediately on first login.
+You will be prompted to set a new password on first login.
 
 ---
 
