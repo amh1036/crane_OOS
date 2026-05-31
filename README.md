@@ -118,21 +118,36 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Quick Start
 
-**Only prerequisite: [Docker Desktop](https://docs.docker.com/get-docker/) installed and running.**
-
 ### Linux / macOS
 
+**Prerequisites:**
+- Docker Desktop installed and running
+
+Open a terminal in the folder where you want CRANE installed, then run:
+
 ```bash
+cd ~/Desktop
 curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
 ```
 
-### Windows (PowerShell)
+---
+
+### Windows
+
+**Prerequisites:**
+- Docker Desktop installed and running
+- Docker set to **Linux containers** (right-click Docker tray icon to switch)
+
+Open PowerShell in the folder where you want CRANE installed, then run:
 
 ```powershell
+cd $HOME\Desktop
 irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
 ```
 
-The installer downloads CRANE, generates a secure `.env` configuration automatically, and starts all services. **First run takes 3–5 minutes** while Docker builds the backend image and downloads the vulnerability database.
+---
+
+The installer downloads CRANE, generates a secure configuration automatically, and starts all services. **First run takes 3–5 minutes** while Docker builds the backend image and downloads the vulnerability database.
 
 ### Manual installation
 
