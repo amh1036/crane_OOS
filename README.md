@@ -121,7 +121,7 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 ### Linux / macOS
 
 **Prerequisites:**
-- Docker Desktop installed and running
+- [Docker Desktop](https://docs.docker.com/get-docker/) installed and running
 
 Open a terminal in the folder where you want CRANE installed, then run:
 
@@ -135,7 +135,7 @@ curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.
 ### Windows
 
 **Prerequisites:**
-- Docker Desktop installed and running
+- [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) installed and running
 - Docker set to **Linux containers** (right-click Docker tray icon to switch)
 
 Open PowerShell in the folder where you want CRANE installed, then run:
