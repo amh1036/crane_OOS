@@ -40,7 +40,7 @@
 
   --sidebar-w: 280px;
   --toc-w: 232px;
-  --content-max: 760px;
+  --content-max: 912px;
   --topbar-h: 60px;
 
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
@@ -85,7 +85,7 @@ body {
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
-  font-size: 16px;
+  font-size: 19.2px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
