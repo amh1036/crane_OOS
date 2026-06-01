@@ -20,60 +20,119 @@
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
           <div>
             <span class="callout-title">Not legal advice</span>
-            <p>CRANE helps you organise and evidence your compliance work; it does not interpret the law for you or replace qualified legal or conformity-assessment advice. Always confirm obligations against the official regulation and your Notified Body where applicable.</p>
+            <p>CRANE helps you organise and evidence your compliance work; it does not interpret the law for you or replace qualified legal or conformity-assessment advice. Always confirm obligations against the official regulation text and your Notified Body where applicable.</p>
           </div>
         </div>
 
         <h2>What the CRA covers</h2>
-        <p>The Cyber Resilience Act (Regulation (EU) 2024/2847) sets binding cybersecurity requirements for <strong>products with digital elements</strong> placed on the EU market. It applies across the lifecycle — from design and the components you ship, through vulnerability handling, to the support period you commit to. Manufacturers carry the bulk of the obligations, with related duties for importers and distributors.</p>
+        <p>The Cyber Resilience Act (Regulation (EU) 2024/2847) sets binding cybersecurity requirements for <strong>products with digital elements</strong> placed on the EU market. It applies across the whole product lifecycle — from design and the components you ship, through vulnerability handling and security updates, to the support period you commit to. Manufacturers carry the bulk of the obligations, with related duties for importers and distributors.</p>
+        <p>The CRA is horizontal — it applies across sectors and product types, from consumer IoT to industrial control systems, unless a sector-specific regulation already provides equivalent requirements (such as certain medical devices under MDR).</p>
 
         <h2 id="article-3">Article 3 — scope &amp; definitions</h2>
-        <p>Article 3 defines what counts as a product with digital elements and introduces the concept of <strong>remote data processing solutions</strong> (Article 3(2)) — cloud backends and update servers whose absence would prevent the product from performing its function. These are pulled into scope alongside the product itself.</p>
-        <p>CRANE includes a classification wizard built on the <strong>DIGITALEUROPE I1 / I3 / I5 / I6</strong> guidance to help you assess whether a remote processing element is in scope, and to document the rationale for that decision.</p>
+        <p>Article 3 defines what counts as a product with digital elements. The key test: does the product have components that process data, and does that processing have a direct or indirect connection to a network or device? If yes, the CRA almost certainly applies.</p>
+
+        <h3>What is in scope</h3>
+        <ul>
+          <li>Hardware products with digital elements (connected sensors, routers, cameras, smart appliances)</li>
+          <li>Software products placed on the market as standalone products (desktop applications, mobile apps, firmware)</li>
+          <li>Remote data processing solutions integral to the product's function (Article 3(2))</li>
+        </ul>
+
+        <h3>What is out of scope</h3>
+        <ul>
+          <li>Products already covered by sector-specific EU regulation with equivalent requirements (certain medical devices, vehicles, aviation)</li>
+          <li>Products developed or modified exclusively for national security or military purposes</li>
+          <li>Pure SaaS services with no installable component (though cloud backends of in-scope products may be covered via Article 3(2))</li>
+          <li>Open source software developed entirely outside a commercial context</li>
+        </ul>
+
+        <h3 id="article-3-2">Remote data processing solutions (Article 3(2))</h3>
+        <p>Article 3(2) extends the product scope to cover cloud backends and remote services whose <em>absence would prevent the product from performing its intended function</em>. CRANE includes a classification wizard built on the <strong>DIGITALEUROPE I1 / I3 / I5 / I6</strong> guidance to help you assess whether a remote processing element is in scope, and to document the rationale.</p>
         <div class="callout tip">
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <div><p>The Article 3(2) wizard produces a documented, repeatable scope decision — useful when a consultant or assessor later asks <em>why</em> a backend was or wasn't treated as in scope.</p></div>
+          <div><p>The Article 3(2) wizard produces a documented, repeatable scope decision. See <a href="concepts.html#remote-processing">Remote processing elements</a> for the four DIGITALEUROPE criteria.</p></div>
+        </div>
+
+        <h2 id="product-classes">Product classification</h2>
+        <p>The CRA introduces a risk-based classification system. Most products are <strong>default</strong> class — but products that perform security-relevant functions may fall into <strong>Important Class I</strong> or <strong>Important Class II</strong>, which require stricter conformity assessment routes.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Class</th><th>Examples</th><th>Conformity assessment</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Default</strong></td><td>General-purpose software, connected toys, smart speakers</td><td>Manufacturer self-assessment</td></tr>
+              <tr><td><strong>Important — Class I</strong></td><td>Identity management, browsers, password managers, VPNs, network switches</td><td>Harmonised standard + self-assessment, or third-party</td></tr>
+              <tr><td><strong>Important — Class II</strong></td><td>Hypervisors, PKI, industrial automation, safety-critical devices, firewalls</td><td>Third-party Notified Body mandatory</td></tr>
+            </tbody>
+          </table>
         </div>
 
         <h2 id="annex-i">Annex I — essential requirements</h2>
-        <p>Annex I sets out the essential cybersecurity requirements, in two parts: <strong>Part I</strong> covers product properties (secure by default, protection of data, attack-surface minimisation, and so on); <strong>Part II</strong> covers vulnerability-handling requirements (an SBOM, timely security updates, a coordinated disclosure policy, and more).</p>
+        <p>Annex I sets out the essential cybersecurity requirements in two parts:</p>
+        <p><strong>Part I — Product security properties</strong> covers what the product itself must achieve: protection from unauthorised access, data confidentiality and integrity, minimisation of attack surface, resilience against denial of service, security by default configuration, and the ability to receive security updates.</p>
+        <p><strong>Part II — Vulnerability handling requirements</strong> covers what the manufacturer must do: maintain and publish a software bill of materials, provide security updates without undue delay, operate a coordinated disclosure policy, notify authorities of actively exploited vulnerabilities and severe incidents, and define a support period.</p>
         <p>CRANE's <strong>Annex I matrix</strong> turns this into a living coverage map: each requirement is tracked per product, with its status and links to the evidence that satisfies it.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Annex I requirement (illustrative)</th><th>Where CRANE captures it</th></tr></thead>
+            <thead><tr><th>Annex I requirement</th><th>Where CRANE captures it</th></tr></thead>
             <tbody>
-              <tr><td>Software bill of materials</td><td><a href="concepts.html#sbom">SBOM analysis</a></td></tr>
-              <tr><td>Effective vulnerability handling</td><td><a href="concepts.html#vulnerabilities">Vulnerability management</a> · VEX</td></tr>
-              <tr><td>Timely security updates</td><td>Update history · <a href="features.html#security-operations">Security operations</a></td></tr>
-              <tr><td>Coordinated vulnerability disclosure</td><td>CVD policy publishing</td></tr>
-              <tr><td>Risk-based secure design</td><td><a href="concepts.html#risk">Risk assessments</a> (STRIDE / TARA)</td></tr>
+              <tr><td>Software bill of materials (§1)</td><td><a href="concepts.html#sbom">SBOM analysis</a></td></tr>
+              <tr><td>Timely security updates (§2)</td><td>Security update history</td></tr>
+              <tr><td>Coordinated vulnerability disclosure (§3)</td><td>CVD policy publishing</td></tr>
+              <tr><td>Vulnerability handling process (§4)</td><td><a href="concepts.html#vulnerabilities">Vulnerability management</a> · PSIRT workflow</td></tr>
+              <tr><td>Risk-based secure design (§5–8)</td><td><a href="concepts.html#risk">Risk assessments</a> (STRIDE / TARA)</td></tr>
+              <tr><td>No known exploitable vulnerabilities at release (§9)</td><td>Release gate · VEX assessments</td></tr>
+              <tr><td>Secure by default configuration</td><td>Annex I matrix · evidence links</td></tr>
+              <tr><td>Support period declaration</td><td>Support period module</td></tr>
             </tbody>
           </table>
         </div>
 
         <h2 id="annex-ii">Annex II — technical documentation</h2>
-        <p>Annex II describes the technical documentation a manufacturer must compile to demonstrate conformity. Because CRANE already holds the underlying evidence — SBOMs, assessments, vulnerability records, the Annex I coverage map — it can assemble a <a href="features.html#compliance-core">technical documentation export</a> in one step, ready for internal conformity assessment and CE marking.</p>
+        <p>Annex II describes the technical documentation a manufacturer must compile to demonstrate conformity. It includes a general description of the product, design and development documentation including risk assessments, information on security measures implemented, a software bill of materials, the vulnerability handling policy and processes, and a list of harmonised standards applied.</p>
+        <p>Because CRANE already holds the underlying evidence, it can assemble a <a href="features.html#compliance-core">technical documentation export</a> in one step, ready for internal conformity assessment and CE marking.</p>
 
-        <h2 id="reporting">Vulnerability &amp; incident reporting</h2>
-        <p>The CRA introduces duties to report actively exploited vulnerabilities and severe incidents to the relevant authorities within tight deadlines. CRANE's vulnerability records, advisories and audit trail give you the structured, timestamped basis these reports require.</p>
+        <h2 id="reporting">Vulnerability &amp; incident reporting (Article 14)</h2>
+        <p>The CRA introduces strict timelines for reporting to <strong>ENISA</strong> and relevant national authorities:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Event</th><th>Deadline</th></tr></thead>
+            <tbody>
+              <tr><td>Early warning of actively exploited vulnerability</td><td><strong>24 hours</strong> after becoming aware</td></tr>
+              <tr><td>Vulnerability notification</td><td><strong>72 hours</strong> after becoming aware</td></tr>
+              <tr><td>Final vulnerability report</td><td><strong>14 days</strong> after fix is available</td></tr>
+              <tr><td>Severe incident early warning</td><td><strong>24 hours</strong> after becoming aware</td></tr>
+              <tr><td>Severe incident notification</td><td><strong>72 hours</strong> after becoming aware</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>CRANE's vulnerability records, advisories and audit trail give you the structured, timestamped basis these reports require. Full Article 14 reporting support is on CRANE's near-term roadmap, targeting the <strong>11 September 2026</strong> deadline.</p>
 
-        <h2 id="substantial-changes">Substantial changes</h2>
-        <p>When a product changes in a way that affects its compliance, the CRA may treat it as a <strong>substantial change</strong> — potentially triggering a fresh conformity assessment. CRANE lets you assess a change and track the re-conformity work it creates, with the version history to show what changed and when.</p>
+        <h2 id="substantial-changes">Substantial changes (Article 3(4))</h2>
+        <p>When a product changes in a way that affects its compliance, the CRA may treat it as a <strong>substantial change</strong> — potentially triggering a fresh conformity assessment as if it were a new product. CRANE lets you record changes, assess substantiality with documented rationale, and track re-conformity work triggered by that decision.</p>
 
         <h2 id="timeline">Compliance timeline</h2>
-        <p>The CRA's obligations phase in over time. The exact dates and their interpretation should always be confirmed against the official text, but the broad shape is:</p>
         <ol class="steps">
-          <li><div class="step-title">Entry into force</div><p>The regulation is in force; the transition period begins.</p></li>
-          <li><div class="step-title">Reporting obligations — 11 September 2026</div><p>Duties around reporting actively exploited vulnerabilities and severe incidents begin to apply. CRANE's near-term roadmap targets full support for these reporting obligations by this date.</p></li>
-          <li><div class="step-title">Main obligations apply</div><p>The full set of manufacturer obligations — essential requirements, conformity assessment, CE marking — applies to products placed on the market.</p></li>
+          <li>
+            <div class="step-title">Regulation in force — November 2024</div>
+            <p>The regulation entered into force. The transition period begins. Manufacturers should start compliance programmes now — evidence collection is most valuable when it covers the product's whole lifecycle.</p>
+          </li>
+          <li>
+            <div class="step-title">Reporting obligations — 11 September 2026</div>
+            <p>Duties around reporting actively exploited vulnerabilities and severe incidents begin to apply (Article 14). CRANE's near-term roadmap targets full support for these reporting workflows by this date.</p>
+          </li>
+          <li>
+            <div class="step-title">Main obligations apply — 11 December 2027</div>
+            <p>The full set of manufacturer obligations applies: essential requirements, conformity assessment, CE marking, technical documentation, and the declaration of conformity.</p>
+          </li>
         </ol>
         <div class="callout">
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <div><p>Starting evidence collection early matters: the audit trail and version history are most valuable when they cover a product's whole life, not just the weeks before an assessment.</p></div>
+          <div><p>Starting evidence collection early matters — the audit trail and version history are most valuable when they cover a product's whole life, not just the weeks before an assessment deadline.</p></div>
         </div>
 
         <div class="card-grid">
           <a class="card" href="concepts.html"><h4>Core Concepts →</h4><p>How these regulatory ideas become objects in CRANE.</p></a>
+          <a class="card" href="features.html"><h4>Feature Reference →</h4><p>The complete capability matrix by area.</p></a>
           <a class="card" href="scenarios.html"><h4>Scenarios →</h4><p>Worked examples of CRA compliance with CRANE.</p></a>
         </div>
       </article>

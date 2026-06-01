@@ -81,8 +81,10 @@
     return '' +
       '<aside class="sidebar" id="sidebar">' +
         '<a class="brand" href="index.html">' +
-          '<span class="brand-mark">' + svg('<path d="M3 7h13l-2 4h-9z" fill="currentColor" stroke="none"/><path d="M16 7l3 9" /><circle cx="19" cy="18" r="2" fill="currentColor" stroke="none"/><path d="M6 11v6"/>', "") + '</span>' +
-          '<span><span class="brand-name">CRANE</span><div class="brand-sub">CRA Norm Engine</div></span>' +
+          '<span class="brand-logo">' +
+            '<span class="brand-wordmark"><span class="brand-cra">CRA</span><span class="brand-ne">NE</span></span>' +
+            '<span class="brand-motto">Conformity by design</span>' +
+          '</span>' +
         '</a>' +
         '<div class="nav-search"><input type="search" id="navSearch" placeholder="Search docs\u2026" autocomplete="off" spellcheck="false"></div>' +
         '<nav class="nav" id="navList">' + nav + '<div class="nav-empty" id="navEmpty" hidden>No pages match.</div></nav>' +

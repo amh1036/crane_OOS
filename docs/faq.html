@@ -17,6 +17,7 @@
         <p class="lead">Quick answers to the questions that come up most often, and fixes for the issues you're most likely to hit during install and first run.</p>
 
         <h2 id="general">General</h2>
+
         <h3>Is CRANE production-ready?</h3>
         <p>CRANE is in active development and used in real compliance engagements. Core modules are stable, but some advanced features are still evolving. It is <strong>not yet recommended for fully unattended production use without technical oversight</strong> — run it with someone who can keep an eye on updates and backups.</p>
 
@@ -24,20 +25,30 @@
         <p>Nothing. CRANE is free and open source under <strong>AGPL-3.0</strong>. There are no per-seat or per-client licensing fees — which is why consultants can run one instance per client at no marginal cost.</p>
 
         <h3>What does AGPL-3.0 mean for me?</h3>
-        <p>You can use, audit, fork and extend CRANE freely. The key obligation of the AGPL is that if you modify CRANE and offer it to others over a network, you must make your modified source available to those users under the same licence. For internal self-hosted use, you simply run it.</p>
+        <p>You can use, audit, fork and extend CRANE freely. The key obligation: if you modify CRANE and offer it to others <em>over a network</em>, you must make your modified source available under the same licence. For internal self-hosted use, you simply run it — no obligations triggered.</p>
+
+        <h3>Can I use CRANE commercially?</h3>
+        <p>Yes. Using CRANE to support your commercial compliance programme is unrestricted. Consultants can run it for clients without per-client fees. The AGPL restriction only applies if you modify CRANE and offer it as a service to others.</p>
 
         <h3>Where does my data go?</h3>
         <p>Nowhere you don't control. All data stays in your own PostgreSQL instance, with <strong>no telemetry, no callbacks and no external dependencies at runtime</strong>. You can export your full dataset at any time.</p>
 
         <h3>Which SBOM format does CRANE accept?</h3>
-        <p><strong>CycloneDX.</strong> CRANE scores SBOM quality, validates CRA requirements and checks NTIA minimum elements, and can diff two SBOM versions.</p>
+        <p><strong>CycloneDX</strong> (JSON, versions 1.4–1.6). CRANE scores SBOM quality, validates CRA Phase 2 requirements and checks NTIA minimum elements, and can diff two SBOM versions. SPDX import is on the roadmap.</p>
 
         <h3>Do I have to run Trivy?</h3>
-        <p>No. Trivy is optional. CRANE uses OSV and NVD data with EPSS scoring out of the box; Trivy adds deeper scanning if you enable it.</p>
+        <p>No. Trivy is optional. CRANE uses OSV and NVD data with EPSS scoring out of the box; Trivy adds deeper OS-level and container scanning if you enable it. The Trivy binary is pre-installed in the Docker image but only activated when you submit an SBOM for scanning.</p>
+
+        <h3>Does CRANE replace a Notified Body assessment?</h3>
+        <p>No. CRANE organises and evidences your compliance work. Whether you need a Notified Body depends on your product classification under the CRA. For default-class products, a manufacturer self-assessment supported by CRANE's evidence is the expected route. For Important Class II products, a third-party Notified Body assessment is mandatory regardless of tooling.</p>
+
+        <h3>Is CRANE an official EU compliance tool?</h3>
+        <p>No. CRANE is an independent open-source project with no affiliation to the European Commission, ENISA, or any standards body. It is built to reflect the regulation as written, but always verify against official guidance.</p>
 
         <h2 id="install-issues">Installation &amp; first run</h2>
+
         <h3>The first start is taking several minutes — is it stuck?</h3>
-        <p>Almost certainly not. The <strong>first run takes 3–5 minutes</strong> while Docker builds the backend image and downloads the vulnerability database. Watch progress with:</p>
+        <p>Almost certainly not. The <strong>first run takes 3–5 minutes</strong> while Docker builds the backend image and downloads the Trivy vulnerability database. Watch progress with:</p>
         <div class="code-block"><pre><code><span class="c-cmd">docker</span> compose logs -f</code></pre></div>
 
         <h3>A port is already in use</h3>
@@ -46,15 +57,22 @@
 <span class="c-cmd">netstat</span> -ano | findstr :5173   <span class="c-cmt"># Windows</span></code></pre></div>
 
         <h3>Windows: containers fail to start</h3>
-        <p>Make sure Docker Desktop is set to <strong>Linux containers</strong> — right-click the Docker tray icon and switch if needed. CRANE's images are Linux-based.</p>
+        <p>Make sure Docker Desktop is set to <strong>Linux containers</strong> — right-click the Docker tray icon and switch if needed. CRANE's images are Linux-based and will not start in Windows containers mode.</p>
+
+        <h3>The install script was blocked by my security policy</h3>
+        <p>Some organisations block <code>curl | bash</code> patterns. Use the manual installation instead: download the ZIP from GitHub, extract it, copy <code>.env.example</code> to <code>.env</code>, set your secrets, and run <code>docker compose up -d</code>. See <a href="quickstart.html#manual-installation">Manual installation</a>.</p>
 
         <h3>I can't log in / forgot the admin password</h3>
-        <p>The default credentials are <code>admin@example.com</code> / <code>admin1234</code>, and you're prompted to change the password on first login. If you've lost access, you can reset the relevant record directly in the database or recreate the stack from a backup. Never leave the default password in place on a reachable instance.</p>
+        <p>The default credentials are <code>admin@example.com</code> / <code>admin1234</code>, and you're prompted to change the password on first login. If you've lost access, reset it directly in the database:</p>
+        <div class="code-block"><pre><code><span class="c-cmt"># Generate a new bcrypt hash for your new password first</span>
+<span class="c-cmt"># Then update the record:</span>
+<span class="c-cmd">docker</span> compose exec postgres psql -U postgres -d cra_compliance \
+  -c "UPDATE users SET hashed_password='&lt;new_hash&gt;' WHERE email='admin@example.com';"</code></pre></div>
 
         <h3>How do I update to a newer version?</h3>
         <div class="code-block"><pre><code><span class="c-cmd">git</span> pull
 <span class="c-cmd">docker</span> compose up -d --build</code></pre></div>
-        <p>Database migrations are handled by Alembic on startup. <strong>Back up first</strong> — see <a href="configuration.html#backups">Backups</a>.</p>
+        <p>Database migrations are handled by Alembic on startup — no manual steps needed. <strong>Back up first</strong> — see <a href="configuration.html#backups">Backups</a>.</p>
 
         <h3>How do I completely reset my instance?</h3>
         <div class="callout warn">
@@ -63,11 +81,37 @@
         </div>
 
         <h2 id="usage">Using the platform</h2>
+
         <h3>How should consultants isolate client data?</h3>
         <p>Run <strong>one instance per client</strong>, each in its own directory with its own <code>.env</code> and database volume. See <a href="configuration.html#multi-client">Running multiple isolated instances</a>.</p>
 
-        <h3>Can I integrate CRANE with my CI or issue tracker?</h3>
-        <p>You can drive everything through the <a href="api.html">REST API</a> today. Native GitHub / GitLab and Jira / GitHub Issues integrations are on the <a href="contributing.html#roadmap">roadmap</a>.</p>
+        <h3>Can I use CRANE for training courses or university exercises?</h3>
+        <p>Yes — this is explicitly supported and costs nothing. Spin up a shared instance, create student accounts with scoped roles, and let each team build out a fictional product through the full compliance lifecycle. The audit log makes reviewing student work straightforward.</p>
+
+        <h3>How do I create additional users?</h3>
+        <p>Log in as admin, go to <strong>Administration → Users</strong>, and invite new users by email. Assign them a role that reflects their access level. With LDAP enabled, users can also be provisioned automatically on first login.</p>
+
+        <h3>What roles are available by default?</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Role</th><th>Typical user</th></tr></thead>
+            <tbody>
+              <tr><td>Admin</td><td>Platform administrator — full access</td></tr>
+              <tr><td>Product Owner</td><td>Responsible for product compliance</td></tr>
+              <tr><td>Cybersecurity Engineer</td><td>Vulnerability management, risk assessments</td></tr>
+              <tr><td>Development Team</td><td>SBOM uploads, release management</td></tr>
+              <tr><td>Legal Team</td><td>Read-only access for compliance review</td></tr>
+              <tr><td>Lifecycle Manager</td><td>Support periods, end-of-life management</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Roles can be customised with granular permissions in Administration → Roles.</p>
+
+        <h3>Can I integrate CRANE with my CI pipeline or issue tracker?</h3>
+        <p>You can drive everything through the <a href="api.html">REST API</a> today — upload SBOMs, trigger scans, query vulnerability status. Native GitHub / GitLab and Jira integrations are on the <a href="contributing.html#roadmap">roadmap</a>.</p>
+
+        <h3>How do I export data for a Notified Body?</h3>
+        <p>Use the <strong>Technical Documentation</strong> export from the product or release detail page. This assembles the evidence package from your SBOM, risk assessment, vulnerability records, and Annex I coverage map in one step. For raw data portability, use the full data export from Administration.</p>
 
         <h2 id="getting-help">Getting help</h2>
         <div class="card-grid">

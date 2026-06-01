@@ -18,12 +18,37 @@
 
         <div class="callout">
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-          <div><p>Everything in CRANE hangs off a <strong>product</strong>. Releases, SBOMs, assessments and evidence are all scoped to a product and a version, which is what makes the audit trail coherent.</p></div>
+          <div><p>Everything in CRANE hangs off a <strong>product</strong>. Releases, SBOMs, assessments and evidence are all scoped to a product and a version — which is what makes the audit trail coherent.</p></div>
         </div>
 
         <h2 id="products">Products</h2>
         <p>A <strong>product</strong> is a thing you place on the EU market that has digital elements — a connected sensor, a firmware image, a desktop application, a cloud-backed appliance. Each product carries the CRA-relevant properties and the justifications that explain why those properties apply.</p>
         <p>Products hold hardware and firmware/software versions, an assigned support period, and a coverage map against the obligations that apply to them. The product registry is the single inventory a Notified Body or internal assessor reviews first.</p>
+
+        <h3 id="product-classification">Product classification</h3>
+        <p>The CRA divides products into three tiers based on risk level, each with different conformity assessment routes:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Classification</th><th>Description</th><th>Conformity route</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Default</strong></td><td>Most products — general-purpose software, connected consumer devices</td><td>Manufacturer self-assessment</td></tr>
+              <tr><td><strong>Important — Class I</strong></td><td>Higher risk: identity management, browsers, password managers, network devices</td><td>Harmonised standards or third-party</td></tr>
+              <tr><td><strong>Important — Class II</strong></td><td>Highest risk: hypervisors, firewalls, industrial control systems, safety-critical</td><td>Third-party Notified Body required</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>CRANE lets you record and justify the classification for each product, which determines the evidence standard your release gates should enforce.</p>
+
+        <h3 id="remote-processing">Remote processing elements (Article 3(2))</h3>
+        <p>Cloud backends, update servers and remote APIs that are <em>necessary for the product to function</em> are pulled into CRA scope as <strong>remote data processing solutions</strong>. CRANE includes a classification wizard based on the DIGITALEUROPE <strong>I1 / I3 / I5 / I6</strong> criteria to help you assess each element:</p>
+        <ul>
+          <li><strong>I1</strong> — Is it developed by the manufacturer (not a third-party service)?</li>
+          <li><strong>I3</strong> — Is it necessary for the product to perform its intended function?</li>
+          <li><strong>I5</strong> — Does it directly interact with the product?</li>
+          <li><strong>I6</strong> — Is there bidirectional data exchange between the product and the service?</li>
+        </ul>
+        <p>All four criteria must be met for a remote element to be classified as in scope. The wizard records your answers and the rationale — a documented, repeatable decision that holds up to scrutiny.</p>
+
         <figure class="figure">
           <img src="https://raw.githubusercontent.com/cra-norm-engine/crane/main/.github/assets/productInventory.png" alt="CRANE product inventory listing products with their CRA properties and justifications" loading="lazy">
           <figcaption>The product inventory — every product with its required CRA properties and justifications.</figcaption>
@@ -33,22 +58,55 @@
         <p>A <strong>release</strong> is a specific, shippable version of a product. CRA obligations attach to what you actually place on the market, so releases — not products in the abstract — are where evidence accumulates: the SBOM that shipped, the vulnerabilities known at the time, the risk assessment that was approved, and the gate that was passed.</p>
         <p>Because releases are versioned, CRANE can show how a product's security posture changed over time — which is exactly the question an auditor or a <a href="cra-context.html#substantial-changes">substantial-change</a> review asks.</p>
 
+        <h3>Release lifecycle</h3>
+        <p>Each release moves through a defined lifecycle:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Draft</strong></td><td>In preparation — evidence is being collected, gate not yet passed</td></tr>
+              <tr><td><strong>Released</strong></td><td>Placed on the market — all gate requirements satisfied</td></tr>
+              <tr><td><strong>Recalled</strong></td><td>Withdrawn — a critical issue was found post-release</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Version history is immutable. A recalled release stays in the record with its evidence intact — the audit trail never loses information.</p>
+
         <h2 id="sbom">SBOMs</h2>
         <p>A <strong>Software Bill of Materials</strong> lists the components inside a release. CRANE ingests <strong>CycloneDX</strong> SBOMs and does four things with them:</p>
         <ul>
-          <li><strong>Quality scoring</strong> — how complete and well-formed the SBOM is.</li>
-          <li><strong>CRA validation</strong> — whether it carries the fields the CRA expects.</li>
-          <li><strong>NTIA minimum-elements</strong> — a check against the recognised baseline for SBOM contents.</li>
-          <li><strong>Diff view</strong> — what changed between two SBOM versions, so you can see added, removed and bumped components at a glance.</li>
+          <li><strong>Quality scoring</strong> — how complete and well-formed the SBOM is (0–100, graded A–F).</li>
+          <li><strong>CRA validation</strong> — whether it carries the fields the CRA Phase 2 requirements expect.</li>
+          <li><strong>NTIA minimum-elements</strong> — a check against the recognised baseline: supplier name, component name, version, unique identifiers, dependency relationships, SBOM author, and timestamp.</li>
+          <li><strong>Diff view</strong> — what changed between two SBOM versions, so you can see added, removed and version-bumped components at a glance.</li>
         </ul>
-        <p>Once a component inventory exists, CRANE can map it against vulnerability data automatically.</p>
+        <p>Once a component inventory exists, CRANE maps it against vulnerability data automatically.</p>
+
+        <div class="callout tip">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <div><p>Aim for a quality score above 80 before submitting to a Notified Body. Scores below 60 typically indicate missing supplier information or version strings, which assessors flag immediately.</p></div>
+        </div>
 
         <h2 id="vulnerabilities">Vulnerabilities</h2>
         <p>CRANE runs a <strong>PSIRT-style workflow</strong> over the components found in your SBOMs. It tracks CVEs, prioritises them, and records how you decided to respond.</p>
         <div class="card-grid">
-          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><h4>Scanning</h4><p>Optional Trivy scans plus OSV and NVD data identify CVEs in your components.</p></div>
-          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><h4>EPSS scoring</h4><p>FIRST.org EPSS scores estimate exploitation likelihood so you fix what matters first.</p></div>
-          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3 4 6v6c0 5 3.4 7.8 8 9 4.6-1.2 8-4 8-9V6Z"/></svg></div><h4>VEX assessments</h4><p>Record whether each CVE actually affects your product, with documented justification.</p></div>
+          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><h4>Scanning</h4><p>Optional Trivy scans plus OSV and NVD data identify CVEs in your components automatically.</p></div>
+          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><h4>EPSS scoring</h4><p>FIRST.org EPSS scores estimate exploitation likelihood so you fix what actually matters first, not just what scores highest on CVSS.</p></div>
+          <div class="card"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3 4 6v6c0 5 3.4 7.8 8 9 4.6-1.2 8-4 8-9V6Z"/></svg></div><h4>VEX assessments</h4><p>Record whether each CVE actually affects your product, with documented justification — turning raw scanner output into defensible compliance evidence.</p></div>
+        </div>
+
+        <h3>VEX statuses</h3>
+        <p>A <strong>Vulnerability Exploitability eXchange (VEX)</strong> assessment records one of four statuses per CVE:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Not affected</strong></td><td>The vulnerability is present in a component but does not affect this product (e.g. the vulnerable code path is not reachable)</td></tr>
+              <tr><td><strong>Affected</strong></td><td>The product is affected — action required</td></tr>
+              <tr><td><strong>Fixed</strong></td><td>The vulnerability has been remediated in this or a subsequent release</td></tr>
+              <tr><td><strong>Under investigation</strong></td><td>Impact is not yet determined</td></tr>
+            </tbody>
+          </table>
         </div>
         <p>The result is a defensible answer to the question every vulnerability raises: <em>does this affect us, and what did we do about it?</em></p>
 
@@ -56,24 +114,50 @@
         <p>A <strong>release gate</strong> is a structured readiness checklist that must pass before a release ships. Gates turn "we think we're compliant" into "here is the evidence." A typical gate requires:</p>
         <ul>
           <li>An approved risk assessment.</li>
-          <li>A current SBOM that passes validation.</li>
-          <li>No unresolved critical vulnerabilities (or documented VEX justifications).</li>
-          <li>Supporting evidence such as a pentest report.</li>
+          <li>A current SBOM that passes CRA and NTIA validation.</li>
+          <li>No unresolved critical vulnerabilities (or documented VEX justifications for each).</li>
+          <li>Supporting evidence such as a pentest report or security test results.</li>
         </ul>
-        <p>Gates are configurable per product, so a low-risk utility and a safety-critical device can hold different bars.</p>
+        <p>Gates are configurable per product, so a low-risk utility and a safety-critical device can hold different bars. Gate status is recorded in the audit trail — you can show exactly when and by whom a release was approved.</p>
 
         <h2 id="risk">Risk assessments</h2>
         <p>CRANE supports <strong>STRIDE</strong>, <strong>TARA</strong> or a custom methodology, each with an approval workflow. A risk assessment is a first-class object attached to a release, which is what lets a release gate require an <em>approved</em> assessment rather than just an uploaded file.</p>
 
+        <h3>Supported methodologies</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Methodology</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td><strong>STRIDE</strong></td><td>Software products, general threat modelling — Spoofing, Tampering, Repudiation, Information disclosure, DoS, Elevation of privilege</td></tr>
+              <tr><td><strong>TARA</strong></td><td>Automotive and industrial — Threat Analysis and Risk Assessment per ISO/SAE 21434</td></tr>
+              <tr><td><strong>Custom</strong></td><td>Any sector-specific or organisation-specific framework</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Assessments are versioned and immutable once approved. If a new threat is discovered, you create a new version — the previous approval is preserved in the history.</p>
+
         <h2 id="audit-trail">The audit trail</h2>
         <p>Every action in CRANE is written to an <strong>immutable, timestamped log</strong>. The audit trail is not a feature you turn on — it is the backbone that makes the rest of the platform trustworthy. When an assessor asks "who changed this, and when?", the answer is already recorded.</p>
+        <p>The audit trail records:</p>
+        <ul>
+          <li>Every create, update and delete operation on every object.</li>
+          <li>Who performed the action (user ID and email).</li>
+          <li>The exact timestamp.</li>
+          <li>The previous and new values for changed fields.</li>
+          <li>Login and authentication events.</li>
+        </ul>
+        <div class="callout warn">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+          <div><span class="callout-title">Audit events cannot be deleted</span><p>Even admin users cannot remove audit log entries. This is intentional — the value of the audit trail depends entirely on its tamper-evident nature.</p></div>
+        </div>
 
         <h2>How the pieces fit together</h2>
-        <p>A product accumulates releases. Each release carries an SBOM, which surfaces vulnerabilities, which are triaged and assessed. A risk assessment is approved. A release gate checks that all of this evidence exists before the release ships. The audit trail records each step. At any point you can export a <a href="features.html">technical documentation</a> package built from this evidence.</p>
+        <p>A product accumulates releases. Each release carries an SBOM, which surfaces vulnerabilities, which are triaged and assessed with VEX. A risk assessment is approved. A release gate checks that all of this evidence exists before the release ships. The audit trail records each step. At any point you can export a <a href="features.html#compliance-core">technical documentation</a> package built from this evidence — ready for conformity assessment or a Notified Body review.</p>
 
         <div class="card-grid">
           <a class="card" href="features.html"><h4>Feature Reference →</h4><p>The complete capability matrix, area by area.</p></a>
           <a class="card" href="scenarios.html"><h4>Real-World Scenarios →</h4><p>See these concepts applied end to end.</p></a>
+          <a class="card" href="cra-context.html"><h4>CRA Context →</h4><p>How these objects map to Article 3, Annex I and Annex II.</p></a>
         </div>
       </article>
     </main>
