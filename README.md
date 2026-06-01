@@ -249,6 +249,7 @@ You will be prompted to set a new password on first login.
 - **Issues & feature requests:** [GitHub Issues](https://github.com/cra-norm-engine/crane/issues)
 - **Security vulnerabilities:** See [SECURITY.md](SECURITY.md)
 - **General enquiries:** cra.norm.engine@gmail.com
+- **Slack:** [Link](https://join.slack.com/t/crane-z255551/shared_invite/zt-3zk870lk5-zfaGA4YNJjY9HOcxjSSLBA)  
 
 ---
 
