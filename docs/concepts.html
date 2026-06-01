@@ -81,6 +81,11 @@
           <div><p>Aim for a quality score above 80 before submitting to a Notified Body. Scores below 60 typically indicate missing supplier information or version strings, which assessors flag immediately.</p></div>
         </div>
 
+        <figure class="figure">
+          <img src="https://raw.githubusercontent.com/cra-norm-engine/crane/main/.github/assets/SBOM_Scanner.png" alt="CRANE SBOM scanner showing quality score, CRA validation results and component list" loading="lazy">
+          <figcaption>The SBOM scanner — quality scoring, CRA Phase 2 validation, NTIA minimum-elements check, and full component inventory.</figcaption>
+        </figure>
+
         <h2 id="vulnerabilities">Vulnerabilities</h2>
         <p>CRANE runs a <strong>PSIRT-style workflow</strong> over the components found in your SBOMs. It tracks CVEs, prioritises them, and records how you decided to respond.</p>
         <div class="card-grid">
@@ -103,6 +108,11 @@
           </table>
         </div>
         <p>The result is a defensible answer to the question every vulnerability raises: <em>does this affect us, and what did we do about it?</em></p>
+
+        <figure class="figure">
+          <img src="https://raw.githubusercontent.com/cra-norm-engine/crane/main/.github/assets/Vuln_Scanner.png" alt="CRANE vulnerability scanner showing CVEs with EPSS scores and VEX assessments" loading="lazy">
+          <figcaption>The vulnerability scanner — CVEs surfaced from SBOM components, prioritised by EPSS score, with VEX assessment status per finding.</figcaption>
+        </figure>
 
         <h2 id="release-gates">Release gates</h2>
         <p>A <strong>release gate</strong> is a structured readiness checklist that must pass before a release ships. Gates turn "we think we're compliant" into "here is the evidence." A typical gate requires:</p>
@@ -144,6 +154,11 @@
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
           <div><span class="callout-title">Audit events cannot be deleted</span><p>Even admin users cannot remove audit log entries. This is intentional — the value of the audit trail depends entirely on its tamper-evident nature.</p></div>
         </div>
+
+        <figure class="figure">
+          <img src="https://raw.githubusercontent.com/cra-norm-engine/crane/main/.github/assets/Audit.png" alt="CRANE audit trail showing timestamped, immutable log of every action" loading="lazy">
+          <figcaption>The audit trail — every action timestamped and recorded. Who changed what, and when.</figcaption>
+        </figure>
 
         <h2>How the pieces fit together</h2>
         <p>A product accumulates releases. Each release carries an SBOM, which surfaces vulnerabilities, which are triaged and assessed with VEX. A risk assessment is approved. A release gate checks that all of this evidence exists before the release ships. The audit trail records each step. At any point you can export a <a href="features.html#compliance-core">technical documentation</a> package built from this evidence — ready for conformity assessment or a Notified Body review.</p>
