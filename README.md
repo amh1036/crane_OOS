@@ -13,6 +13,13 @@ CRANE helps manufacturers of products with digital elements meet their CRA oblig
 > **Maturity:** CRANE is in active development and used in real compliance engagements. Core modules are stable. Some advanced features are still evolving. Not yet recommended for fully unattended production use without technical oversight.
 
 ---
+**Online test**
+Do you want to test the tool online without installing it? 
+One instance of the tool is availebl at this address. 
+https://cra-compliance-tool-1.onrender.com
+
+Contact cra.norm.engine@gmail.com to get a time limited username and password
+---
 
 Control CRA compliance via an up-to-date dashboard with the most important information.
 
