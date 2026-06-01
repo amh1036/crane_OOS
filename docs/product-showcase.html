@@ -72,7 +72,7 @@
         <h3>What makes this product complex</h3>
         <ul>
           <li><strong>OPC-UA server</strong> — a rich, standards-based industrial protocol with a large attack surface. Any unauthenticated exposure is a significant finding.</li>
-          <li><strong>Remote VPN access</strong> — a remote data processing element under Article 3(2). CRANE's classification wizard determines it is in scope (I1: manufacturer-developed; I3: necessary for remote diagnostics; I5: direct product interaction; I6: bidirectional data).</li>
+          <li><strong>Remote VPN access</strong> — a remote data processing element under Article 3(2). CRANE's classification wizard determines it is in scope based on the Article 3(2) criteria — manufacturer-developed, necessary for remote diagnostics, direct product interaction, bidirectional data exchange.</li>
           <li><strong>Important Class I</strong> — requires either a harmonised standard or third-party conformity assessment before CE marking.</li>
           <li><strong>Industrial sector overlap</strong> — the Machinery Regulation and NIS2 both apply to the deployment context, requiring careful boundary-drawing.</li>
         </ul>
@@ -93,7 +93,7 @@
           </div>
           <div class="card">
             <h4>Article 3(2) scope decision</h4>
-            <p>VPN diagnostic backend assessed via I1/I3/I5/I6 wizard. All four criteria met → classified as <em>CRA Art. 3(2) in scope</em>. Rationale documented and linked to the product record. Notified Body can review the decision directly in the platform.</p>
+            <p>VPN diagnostic backend assessed via the Article 3(2) classification wizard. All criteria met → classified as <em>CRA Art. 3(2) in scope</em>. Rationale documented and linked to the product record. Notified Body can review the decision directly in the platform.</p>
           </div>
         </div>
 
@@ -124,7 +124,7 @@
           <li><strong>Large component footprint</strong> — embedded Linux, Zigbee/Z-Wave stacks, MQTT broker, REST API server, OTA update client. Each layer carries its own CVE exposure.</li>
           <li><strong>Frequent OTA updates</strong> — quarterly firmware releases mean ongoing SBOM management and vulnerability re-triage.</li>
           <li><strong>Default class</strong> — self-assessment is sufficient, but the evidence standard must still be met. CRANE's Annex I matrix keeps track of which requirements are covered and which have gaps.</li>
-          <li><strong>Cloud backend scope</strong> — the NexCloud management portal is assessed via the Article 3(2) wizard. It provides optional remote management; local operation is possible without it → classified as <em>out of scope</em> (I3 criterion not met).</li>
+          <li><strong>Cloud backend scope</strong> — the NexCloud management portal is assessed via the Article 3(2) wizard. It provides optional remote management; local operation is possible without it → classified as <em>out of scope</em> (not necessary for the product's core function).</li>
         </ul>
 
         <h3>How CRANE manages it</h3>
@@ -174,7 +174,7 @@
           <li><strong>Sector overlap (ERA Regulation)</strong> — railway signalling is also governed by the European Union Agency for Railways (ERA) under the TSI CCS. The CRA and ERA frameworks must be reconciled; CRANE records both sets of obligations.</li>
           <li><strong>EN 50128 SIL4 safety certification</strong> — every change must pass through a joint safety and cybersecurity assessment. CRANE's substantial-change module tracks whether a modification triggers both a new safety case and a new CRA conformity assessment.</li>
           <li><strong>Long support commitments</strong> — railway onboard units have operational lifespans of 20–30 years. Support period obligations under CRA Article 13 are significant.</li>
-          <li><strong>Air-gapped GSM-R interface</strong> — the radio communication backend is a third-party operator (rail infrastructure manager). Assessed via the Article 3(2) wizard: I1 criterion not met (not manufacturer-developed) → classified as <em>third-party component</em>, not in CRA scope for the manufacturer.</li>
+          <li><strong>Air-gapped GSM-R interface</strong> — the radio communication backend is a third-party operator (rail infrastructure manager). Assessed via the Article 3(2) wizard: not developed by the manufacturer → classified as <em>third-party component</em>, not in CRA scope for the manufacturer.</li>
         </ul>
 
         <h3>How CRANE manages it</h3>
