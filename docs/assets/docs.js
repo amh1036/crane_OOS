@@ -20,7 +20,8 @@
     config:   '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
     api:      '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
     faq:      '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/>',
-    contrib:  '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 9v6a3 3 0 0 0 3 3h6"/>'
+    contrib:  '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 9v6a3 3 0 0 0 3 3h6"/>',
+    showcase: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m7 10 3 3 5-5"/>'
   };
 
   // ---- nav model ----
@@ -32,7 +33,8 @@
     { label: "Using CRANE", items: [
       { t: "Core Concepts", f: "concepts.html", i: "concepts" },
       { t: "Feature Reference", f: "features.html", i: "features" },
-      { t: "Real-World Scenarios", f: "scenarios.html", i: "scenarios" }
+      { t: "Real-World Scenarios", f: "scenarios.html", i: "scenarios" },
+      { t: "Product Showcase", f: "product-showcase.html", i: "showcase" }
     ]},
     { label: "Regulatory", items: [
       { t: "CRA Context", f: "cra-context.html", i: "cra" }

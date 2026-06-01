@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRANE Docs — Product Showcase</title>
+  <meta name="description" content="Three simulated products across different sectors — industrial CNC, smart building IoT, and railway safety — demonstrating how CRANE manages complex CRA compliance landscapes.">
+  <link rel="stylesheet" href="assets/docs.css">
+  <script>(function(){try{var t=localStorage.getItem('crane-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+  <div class="layout" id="doc-root">
+    <main class="content">
+      <article class="article">
+        <p class="eyebrow">Using CRANE</p>
+        <h1>Product Showcase</h1>
+        <p class="lead">Three simulated products across different sectors — industrial automation, smart building IoT, and railway safety — showing how CRANE manages a complex, multi-product CRA compliance landscape from a single platform.</p>
+
+        <div class="callout">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
+          <div><p>These are simulated products for demonstration purposes. The data reflects realistic CRA compliance scenarios. Load the full dataset into your CRANE instance using the JSON fixtures in the <a href="https://github.com/cra-norm-engine/crane/tree/main/test-data" target="_blank" rel="noopener"><code>test-data/</code></a> folder.</p></div>
+        </div>
+
+        <!-- ── PRODUCT OVERVIEW ────────────────────────────────────────────── -->
+        <h2 id="overview">The product landscape</h2>
+        <p>Managing CRA compliance for a single product is challenging. Managing it across products of different classifications, sector overlaps, and lifecycle stages — at the same time — is the real-world challenge CRANE is designed for.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Sector</th>
+                <th>CRA Class</th>
+                <th>Conformity route</th>
+                <th>Key challenge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Precisio CNC 5-Axis Controller</strong></td>
+                <td>Industrial automation</td>
+                <td><span class="badge">Important — Class I</span></td>
+                <td>Third-party assessment</td>
+                <td>OPC-UA attack surface, remote diagnostics scope</td>
+              </tr>
+              <tr>
+                <td><strong>NexHub BMS Sensor Hub Gen3</strong></td>
+                <td>Smart building / IoT</td>
+                <td><span class="badge green dot">Default</span></td>
+                <td>Self-assessment</td>
+                <td>Large component footprint, frequent firmware updates</td>
+              </tr>
+              <tr>
+                <td><strong>RailSecure ETCS Level 2 OBU</strong></td>
+                <td>Railway safety</td>
+                <td><span class="badge">Important — Class II</span></td>
+                <td>Notified Body mandatory</td>
+                <td>Safety-critical, sector overlap (ERA/CRA), long support periods</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ── PRODUCT 1 ───────────────────────────────────────────────────── -->
+        <hr>
+        <h2 id="cnc">🏭 Precisio CNC 5-Axis Machining Centre Controller</h2>
+        <p class="lead">Manufacturer: Precisio Steuerungstechnik AG &nbsp;·&nbsp; Classification: Important Class I &nbsp;·&nbsp; First placed on market: July 2024</p>
+
+        <p>An industrial 5-axis CNC machining centre controller with integrated PC-based HMI, real-time motion controller, and networked production management interface. Supports STEP-NC and G-code. Connects to factory MES/ERP via OPC-UA and MQTT. Remote diagnostics via encrypted VPN tunnel. Used in automotive, aerospace, and medical device manufacturing.</p>
+
+        <h3>What makes this product complex</h3>
+        <ul>
+          <li><strong>OPC-UA server</strong> — a rich, standards-based industrial protocol with a large attack surface. Any unauthenticated exposure is a significant finding.</li>
+          <li><strong>Remote VPN access</strong> — a remote data processing element under Article 3(2). CRANE's classification wizard determines it is in scope (I1: manufacturer-developed; I3: necessary for remote diagnostics; I5: direct product interaction; I6: bidirectional data).</li>
+          <li><strong>Important Class I</strong> — requires either a harmonised standard or third-party conformity assessment before CE marking.</li>
+          <li><strong>Industrial sector overlap</strong> — the Machinery Regulation and NIS2 both apply to the deployment context, requiring careful boundary-drawing.</li>
+        </ul>
+
+        <h3>How CRANE manages it</h3>
+        <div class="card-grid">
+          <div class="card">
+            <h4>SBOM &amp; vulnerability scanning</h4>
+            <p>CycloneDX SBOM uploaded per firmware release. Trivy and OSV scan surfaces CVEs in the embedded Linux stack, OPC-UA libraries, and MQTT client. EPSS scores prioritise the OPC-UA NodeId enumeration finding (CVE-2024-38876, CVSS 6.5) over lower-risk dependency issues.</p>
+          </div>
+          <div class="card">
+            <h4>PSIRT workflow</h4>
+            <p>Claroty Research Team report received via CVD policy. CRANE logs the report, tracks the 90-day remediation timeline, links the fix to security update v1.0.1, and publishes advisory SA-2025-001. Audit trail records every state transition with timestamps.</p>
+          </div>
+          <div class="card">
+            <h4>Release gate</h4>
+            <p>Gate for v1.0.0 required: approved STRIDE risk assessment, passed SBOM validation, Notified Body certificate, no open critical CVEs. Gate for v1.0.1 (security patch) required: VEX closure on CVE-2024-38876, updated SBOM, re-validated gate items.</p>
+          </div>
+          <div class="card">
+            <h4>Article 3(2) scope decision</h4>
+            <p>VPN diagnostic backend assessed via I1/I3/I5/I6 wizard. All four criteria met → classified as <em>CRA Art. 3(2) in scope</em>. Rationale documented and linked to the product record. Notified Body can review the decision directly in the platform.</p>
+          </div>
+        </div>
+
+        <h3>Compliance timeline in CRANE</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Event</th><th>CRANE action</th></tr></thead>
+            <tbody>
+              <tr><td>Sep 2023</td><td>Product registered</td><td>Product record created, CRA class set to Important I, scope evaluation started</td></tr>
+              <tr><td>Jun 2024</td><td>v1.0.0 release gate</td><td>Gate passed — SBOM, STRIDE assessment, Notified Body cert all attached</td></tr>
+              <tr><td>Jul 2024</td><td>Placed on market</td><td>Release status → placed_on_market, Annex II documentation exported</td></tr>
+              <tr><td>Sep 2024</td><td>CVE-2024-38876 reported</td><td>Vulnerability report created, 90-day remediation clock started</td></tr>
+              <tr><td>Nov 2024</td><td>Patch developed</td><td>v1.0.1 drafted, SBOM updated, VEX assessment closed</td></tr>
+              <tr><td>Jan 2025</td><td>v1.0.1 released</td><td>Security update published, advisory SA-2025-001 issued, CVD disclosure completed</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ── PRODUCT 2 ───────────────────────────────────────────────────── -->
+        <hr>
+        <h2 id="iot">🏢 NexHub Building Management Sensor Hub Gen3</h2>
+        <p class="lead">Manufacturer: NexConnected Systems SRL &nbsp;·&nbsp; Classification: Default &nbsp;·&nbsp; First placed on market: March 2025</p>
+
+        <p>An IoT gateway and sensor hub for smart building management systems. Aggregates data from up to 256 sensors (temperature, humidity, CO₂, occupancy, energy metering) via Zigbee 3.0, Z-Wave, and Modbus RTU. Connects to building management software via REST API and MQTT over TLS. Supports OTA firmware updates. Deployed in commercial buildings, hospitals, and data centres.</p>
+
+        <h3>What makes this product complex</h3>
+        <ul>
+          <li><strong>Large component footprint</strong> — embedded Linux, Zigbee/Z-Wave stacks, MQTT broker, REST API server, OTA update client. Each layer carries its own CVE exposure.</li>
+          <li><strong>Frequent OTA updates</strong> — quarterly firmware releases mean ongoing SBOM management and vulnerability re-triage.</li>
+          <li><strong>Default class</strong> — self-assessment is sufficient, but the evidence standard must still be met. CRANE's Annex I matrix keeps track of which requirements are covered and which have gaps.</li>
+          <li><strong>Cloud backend scope</strong> — the NexCloud management portal is assessed via the Article 3(2) wizard. It provides optional remote management; local operation is possible without it → classified as <em>out of scope</em> (I3 criterion not met).</li>
+        </ul>
+
+        <h3>How CRANE manages it</h3>
+        <div class="card-grid">
+          <div class="card">
+            <h4>SBOM quality management</h4>
+            <p>Initial SBOM for v3.0.0 scored 62/100 — missing supplier names for several Zigbee stack components. CRANE's quality report identified the gaps. v3.1.0 SBOM scored 88/100 after remediation. NTIA minimum elements now pass.</p>
+          </div>
+          <div class="card">
+            <h4>Vulnerability triage</h4>
+            <p>OSV scan of v3.0.0 surfaces 14 CVEs in embedded dependencies. EPSS filtering identifies 2 with &gt;10% exploitation probability. VEX assessments close 11 as not-affected (vulnerable code path unreachable in the build configuration). 1 patched in v3.1.0. 2 accepted with risk justification.</p>
+          </div>
+          <div class="card">
+            <h4>CVD policy &amp; incoming reports</h4>
+            <p>CVD policy published via CRANE and linked from product documentation. Two external reports received: one from a penetration tester (REST API authentication bypass — patched in v3.1.0), one false positive (closed with VEX justification).</p>
+          </div>
+          <div class="card">
+            <h4>Support period tracking</h4>
+            <p>5-year support period declared for Gen3 (2025–2030). CRANE monitors end-of-support date and triggers alerts at 1 year, 6 months, and 3 months before expiry — giving the product team time to plan an extension or end-of-life notification.</p>
+          </div>
+        </div>
+
+        <h3>SBOM evolution across releases</h3>
+        <p>CRANE's diff view shows what changed between SBOM versions — making the security implications of each release visible at a glance:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component change</th><th>v3.0.0 → v3.1.0</th><th>Security relevance</th></tr></thead>
+            <tbody>
+              <tr><td>mosquitto (MQTT broker)</td><td>2.0.17 → 2.0.18</td><td>Patches CVE-2024-3935 (DoS via malformed CONNECT)</td></tr>
+              <tr><td>openssl</td><td>3.0.11 → 3.0.13</td><td>Patches 2 medium CVEs in TLS stack</td></tr>
+              <tr><td>libcurl</td><td>8.4.0 → 8.6.0</td><td>Patches CVE-2024-2004 (not-affected, VEX closed)</td></tr>
+              <tr><td>custom-ota-client</td><td>1.2.1 → 1.3.0</td><td>Signature verification hardened — no CVE, internal fix</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ── PRODUCT 3 ───────────────────────────────────────────────────── -->
+        <hr>
+        <h2 id="railway">🚆 RailSecure ETCS Level 2 Onboard Unit</h2>
+        <p class="lead">Manufacturer: RailSecure GmbH &nbsp;·&nbsp; Classification: Important Class II &nbsp;·&nbsp; First placed on market: January 2025</p>
+
+        <p>A European Train Control System (ETCS) Level 2 onboard unit for main-line railway operations. Implements Subset-026 v3.6.0 baseline movement authority, speed supervision, and cab signalling. Communicates with Radio Block Centres via GSM-R and LTE-R. Safety-certified to EN 50128 SIL4. Deployed on high-speed and conventional lines across four EU member states.</p>
+
+        <h3>What makes this product complex</h3>
+        <ul>
+          <li><strong>Important Class II</strong> — third-party Notified Body assessment is mandatory. No self-assessment route exists for this classification. The evidence standard is the highest in the CRA.</li>
+          <li><strong>Sector overlap (ERA Regulation)</strong> — railway signalling is also governed by the European Union Agency for Railways (ERA) under the TSI CCS. The CRA and ERA frameworks must be reconciled; CRANE records both sets of obligations.</li>
+          <li><strong>EN 50128 SIL4 safety certification</strong> — every change must pass through a joint safety and cybersecurity assessment. CRANE's substantial-change module tracks whether a modification triggers both a new safety case and a new CRA conformity assessment.</li>
+          <li><strong>Long support commitments</strong> — railway onboard units have operational lifespans of 20–30 years. Support period obligations under CRA Article 13 are significant.</li>
+          <li><strong>Air-gapped GSM-R interface</strong> — the radio communication backend is a third-party operator (rail infrastructure manager). Assessed via the Article 3(2) wizard: I1 criterion not met (not manufacturer-developed) → classified as <em>third-party component</em>, not in CRA scope for the manufacturer.</li>
+        </ul>
+
+        <h3>How CRANE manages it</h3>
+        <div class="card-grid">
+          <div class="card">
+            <h4>Notified Body evidence package</h4>
+            <p>Gate for v1.0.0 includes: TARA risk assessment (approved), SIL4 safety certificate, SBOM with CRA Phase 2 validation, penetration test report, hardware security architecture document, and Annex I coverage map. All assembled as a single export from CRANE for the Notified Body submission.</p>
+          </div>
+          <div class="card">
+            <h4>Substantial change tracking</h4>
+            <p>v1.1.0 introduced a new LTE-R radio module replacing the original GSM-R hardware. CRANE's substantial-change assessment: new radio interface → new attack surface → assessed as substantial. Triggers full re-conformity assessment and a new Notified Body review cycle. Documented rationale stored in version history.</p>
+          </div>
+          <div class="card">
+            <h4>Long-term support period</h4>
+            <p>20-year support period declared (2025–2045). CRANE tracks the obligation across the full period with configurable alerts. End-of-support notifications planned for operators at 2-year, 1-year, and 6-month thresholds before the declared end date.</p>
+          </div>
+          <div class="card">
+            <h4>TARA risk assessment</h4>
+            <p>TARA methodology selected (automotive/railway standard). Threat scenarios cover: RBC spoofing via radio, unauthorised movement authority injection, denial-of-service on the communication channel, and physical tamper of the onboard unit. Each scenario has documented impact, likelihood, and mitigation measures with approval workflow.</p>
+          </div>
+        </div>
+
+        <h3>Substantial change decision matrix</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Change</th><th>Substantial?</th><th>Rationale</th><th>CRA outcome</th></tr></thead>
+            <tbody>
+              <tr><td>New LTE-R radio module</td><td><strong>Yes</strong></td><td>New communication interface introduces new attack surface not covered by original TARA</td><td>Full re-conformity, new Notified Body review</td></tr>
+              <tr><td>Software patch — fix buffer overflow in parser</td><td><strong>No</strong></td><td>Security fix, no new functionality, no new interfaces, risk posture improves</td><td>Security update issued, advisory published, no new conformity required</td></tr>
+              <tr><td>Updated ETCS baseline parameter set</td><td><strong>No</strong></td><td>Configuration change only, no code change, covered by existing safety case</td><td>Internal change record only</td></tr>
+              <tr><td>Addition of passenger Wi-Fi interface (isolated network)</td><td><strong>Yes</strong></td><td>New network interface, even if isolated, changes the product's attack surface and connectivity model</td><td>New risk assessment required, substantial-change re-conformity</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ── CROSS-PRODUCT ───────────────────────────────────────────────── -->
+        <hr>
+        <h2 id="cross-product">Managing the landscape together</h2>
+        <p>What makes CRANE valuable isn't just managing a single product — it's having all three of these products, their releases, vulnerabilities, and obligations in one auditable platform. The dashboard surfaces the items that need attention across the whole portfolio:</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>Portfolio-wide vulnerability view</h4>
+            <p>A single view of all open CVEs across all products, sorted by EPSS score. The CNC controller's OPC-UA CVE and the IoT hub's MQTT broker patch appear alongside each other — letting the security team prioritise across the whole product range, not just per product.</p>
+          </div>
+          <div class="card">
+            <h4>Upcoming end-of-support alerts</h4>
+            <p>The lifecycle alerts module monitors all three support periods simultaneously. As the NexHub Gen3 approaches its 2030 end-of-support date, alerts fire at the configured thresholds — across all product lines in the same notification stream.</p>
+          </div>
+          <div class="card">
+            <h4>Annex I coverage gaps</h4>
+            <p>The Annex I matrix per product shows which essential requirements still have open evidence gaps. The portfolio view makes it clear which products are furthest from a complete evidence package — helping prioritise compliance work before an assessment deadline.</p>
+          </div>
+          <div class="card">
+            <h4>Audit trail across all products</h4>
+            <p>Every action across all three products is recorded in the same immutable audit log. A single export covers the complete activity history of the whole product portfolio — exactly what a Notified Body or internal compliance team needs for a portfolio-level review.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <div>
+            <span class="callout-title">Try it with real data</span>
+            <p>Load all three products into your CRANE instance using the fixtures in <a href="https://github.com/cra-norm-engine/crane/tree/main/test-data" target="_blank" rel="noopener"><code>test-data/</code></a>. Each JSON file contains the full product record including releases, vulnerabilities, risk assessments, and support periods — ready to explore in the UI.</p>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <a class="card" href="quickstart.html"><h4>Install CRANE →</h4><p>Get a running instance and load the test data in minutes.</p></a>
+          <a class="card" href="concepts.html"><h4>Core Concepts →</h4><p>Understand the data model behind these products.</p></a>
+          <a class="card" href="cra-context.html"><h4>CRA Context →</h4><p>How the regulatory obligations map to each product class.</p></a>
+        </div>
+      </article>
+    </main>
+  </div>
+  <script>window.CRANE_PAGE = "product-showcase.html";</script>
+  <script src="assets/docs.js"></script>
+</body>
+</html>
