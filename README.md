@@ -146,11 +146,11 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 **Complete guides and operational reference:**
 
-- 📖 [Installation & Deployment](docs/installation.html) — System requirements, quick start, production setup, TLS, upgrades
-- 🗄️ [Database Implementation](docs/database.html) — Backups, scaling, performance tuning, migrations
-- 📤 [File Upload & Management](docs/file-upload.html) — SBOM processing, evidence attachments, storage limits
-- ⚙️ [Configuration & Deployment](docs/configuration.html) — Environment variables, Docker services, LDAP setup, hardening
-- 🚀 [Quick Start](docs/quickstart.html) — Get running in 5 minutes with one-liners
+- 📖 [Installation & Deployment](https://cra-norm-engine.github.io/crane/installation.html) — System requirements, quick start, production setup, TLS, upgrades
+- 🗄️ [Database Implementation](https://cra-norm-engine.github.io/crane/database.html) — Backups, scaling, performance tuning, migrations
+- 📤 [File Upload & Management](https://cra-norm-engine.github.io/crane/file-upload.html) — SBOM processing, evidence attachments, storage limits
+- ⚙️ [Configuration & Deployment](https://cra-norm-engine.github.io/crane/configuration.html) — Environment variables, Docker services, LDAP setup, hardening
+- 🚀 [Quick Start](https://cra-norm-engine.github.io/crane/quickstart.html) — Get running in 5 minutes with one-liners
 - 📚 [Full Documentation Site](https://cra-norm-engine.github.io/crane/)
 
 ---
