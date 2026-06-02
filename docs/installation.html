@@ -258,67 +258,35 @@ VITE_API_BASE_URL=https://compliance.example.com/api/v1</code></pre>
 
         <!-- ========== REVERSE PROXY ========== -->
         <h2 id="reverse-proxy">Reverse Proxy & TLS Setup</h2>
-        <p>Never expose CRANE directly to the internet. Always run behind a reverse proxy with HTTPS/TLS. Below are examples for Nginx and Caddy.</p>
 
-        <h3>Nginx</h3>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>/etc/nginx/sites-available/crane</div>
-          <pre><code># Upstream to CRANE backend
-upstream crane_backend {
-  server localhost:8000;
-}
+        <h3>Why You Need a Reverse Proxy</h3>
+        <p><strong>CRANE binds to localhost only.</strong> It's not accessible from the internet by default — which is good for security, but you need a way to expose it safely. A reverse proxy sits in front of CRANE and:</p>
+        <ul>
+          <li>Forwards internet traffic to CRANE running on localhost</li>
+          <li>Handles HTTPS/TLS encryption so users have a secure connection</li>
+          <li>Protects CRANE from direct internet exposure</li>
+        </ul>
 
-upstream crane_frontend {
-  server localhost:5173;
-}
-
-# Redirect HTTP → HTTPS
-server {
-  listen 80;
-  server_name compliance.example.com;
-  return 301 https://$server_name$request_uri;
-}
-
-# HTTPS server block
-server {
-  listen 443 ssl http2;
-  server_name compliance.example.com;
-
-  ssl_certificate /etc/letsencrypt/live/compliance.example.com/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/compliance.example.com/privkey.pem;
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_ciphers HIGH:!aNULL:!MD5;
-
-  location / {
-    proxy_pass http://crane_frontend;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
-
-  location /api/ {
-    proxy_pass http://crane_backend;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_read_timeout 300s;
-  }
-}</code></pre>
-        </div>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal — enable and test</div>
-          <pre><code>sudo ln -s /etc/nginx/sites-available/crane /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-sudo certbot --nginx -d compliance.example.com</code></pre>
+        <div class="callout">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
+          <div><p><strong>You need a domain name</strong> (e.g., <code>compliance.example.com</code>) before setting up a reverse proxy. Both Nginx and Caddy will automatically obtain TLS certificates from Let's Encrypt, but they need a valid domain to do so.</p></div>
         </div>
 
-        <h3>Caddy (simpler, auto-TLS)</h3>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Caddyfile</div>
-          <pre><code>compliance.example.com {
+        <h3>Option 1: Caddy (Recommended — Simplest)</h3>
+        <p>Caddy is the easiest option — it automatically handles TLS certificates for you.</p>
+
+        <ol class="steps">
+          <li>
+            <div class="step-title">Install Caddy</div>
+            <p>Follow the <a href="https://caddyserver.com/docs/install">Caddy installation guide</a> for your OS.</p>
+          </li>
+          <li>
+            <div class="step-title">Create a Caddyfile</div>
+            <p>Replace <code>compliance.example.com</code> with your actual domain.</p>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span">/etc/caddy/Caddyfile (or ~/Caddyfile)</div>
+              <pre><code>compliance.example.com {
+  # Serve the Vue app (frontend)
   @frontend {
     not path /api/*
     not path /docs*
@@ -327,16 +295,159 @@ sudo certbot --nginx -d compliance.example.com</code></pre>
     reverse_proxy localhost:5173
   }
 
+  # Route /api/* to the backend API
   handle /api/* {
     reverse_proxy localhost:8000
   }
 }</code></pre>
-        </div>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Run Caddy</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>caddy run</code></pre>
+            </div>
+            <p><strong>That's it!</strong> Caddy will:</p>
+            <ul>
+              <li>Automatically request a TLS certificate from Let's Encrypt</li>
+              <li>Auto-renew the certificate before it expires</li>
+              <li>Start listening on port 443 (HTTPS)</li>
+            </ul>
+          </li>
+          <li>
+            <div class="step-title">Access CRANE</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Browser</div>
+              <pre><code>https://compliance.example.com</code></pre>
+            </div>
+            <p>Your browser should show a valid HTTPS connection (green lock icon).</p>
+          </li>
+        </ol>
+
+        <h3>Option 2: Nginx (More Control)</h3>
+        <p>Nginx requires more manual setup but gives you more control. Use this if you prefer Nginx or need specific configuration.</p>
+
+        <ol class="steps">
+          <li>
+            <div class="step-title">Install Nginx and Certbot</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal — Ubuntu/Debian</div>
+              <pre><code>sudo apt update
+sudo apt install nginx certbot python3-certbot-nginx</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Create Nginx config</div>
+            <p>Replace <code>compliance.example.com</code> with your actual domain.</p>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>/etc/nginx/sites-available/crane</div>
+              <pre><code># Redirect HTTP → HTTPS
+server {
+  listen 80;
+  server_name compliance.example.com;
+  return 301 https://$server_name$request_uri;
+}
+
+# HTTPS server block (TLS config will be added by Certbot)
+server {
+  listen 443 ssl http2;
+  server_name compliance.example.com;
+
+  # Forward the Vue app to the frontend container
+  location / {
+    proxy_pass http://localhost:5173;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Forward /api/* to the backend API
+  location /api/ {
+    proxy_pass http://localhost:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 300s;
+  }
+}</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Enable the Nginx site</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>sudo ln -s /etc/nginx/sites-available/crane /etc/nginx/sites-enabled/
+sudo nginx -t  # Test the config syntax
+sudo systemctl restart nginx</code></pre>
+            </div>
+            <p>If <code>nginx -t</code> shows errors, fix them before restarting.</p>
+          </li>
+          <li>
+            <div class="step-title">Get TLS certificates with Certbot</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>sudo certbot --nginx -d compliance.example.com</code></pre>
+            </div>
+            <p>Certbot will:</p>
+            <ul>
+              <li>Request a certificate from Let's Encrypt for your domain</li>
+              <li>Automatically update your Nginx config with the certificate path</li>
+              <li>Set up auto-renewal</li>
+            </ul>
+          </li>
+          <li>
+            <div class="step-title">Verify Certbot auto-renewal</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>sudo systemctl enable certbot.timer
+sudo systemctl start certbot.timer</code></pre>
+            </div>
+            <p>This ensures your certificate auto-renews before expiration.</p>
+          </li>
+          <li>
+            <div class="step-title">Access CRANE</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Browser</div>
+              <pre><code>https://compliance.example.com</code></pre>
+            </div>
+            <p>Your browser should show a valid HTTPS connection.</p>
+          </li>
+        </ol>
+
+        <h3>Verify It's Working</h3>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal — run</div>
-          <pre><code>caddy run</code></pre>
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code># Check if CRANE is accessible
+curl https://compliance.example.com
+
+# Check TLS certificate details
+echo | openssl s_client -servername compliance.example.com -connect compliance.example.com:443 2>/dev/null | grep -A 5 "Issuer"</code></pre>
         </div>
-        <p>Caddy automatically obtains and renews TLS certificates from Let's Encrypt.</p>
+
+        <h3>Troubleshooting Reverse Proxy</h3>
+        <p><strong>502 Bad Gateway error?</strong> CRANE might not be running or listening on the expected port. Check:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code">docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs backend</code></pre>
+        </div>
+
+        <p><strong>Certbot certificate renewal failing?</strong> Test it manually:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code>sudo certbot renew --dry-run</code></pre>
+        </div>
+
+        <hr>
+
+        <!-- ========== ORIGINAL NGINX SECTION (KEPT FOR REFERENCE) ========== -->
+        <h2 id="reverse-proxy-advanced">Advanced: Custom Nginx Configuration (Reference)</h2>
+        <p>If you need more control over Nginx beyond the basic setup above, here's the complete configuration template.</p>
+
+        <p>For advanced use cases (custom SSL ciphers, rate limiting, multiple backends, etc.), refer to the <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">Nginx proxy documentation</a>.</p>
 
         <hr>
 
