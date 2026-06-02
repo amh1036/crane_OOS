@@ -7,37 +7,36 @@
 ![Status](https://img.shields.io/badge/status-beta-orange)
 ![CI](https://img.shields.io/github/actions/workflow/status/cra-norm-engine/crane/ci.yml?branch=main)
 
-**Self-hosted compliance management for the EU Cyber Resilience Act.**
+## What is CRANE?
 
-CRANE helps manufacturers of products with digital elements meet their CRA obligations — from SBOM analysis and vulnerability tracking to release gates and lifecycle notifications — in one auditable, self-hosted platform.
+**CRANE** is a self-hosted compliance management platform for manufacturers meeting the **EU Cyber Resilience Act (CRA)**. 
 
----
+In one integrated tool, you can:
+- **Track products & releases** with version history and lifecycle management
+- **Upload & analyze SBOMs** (CycloneDX, SPDX) for component completeness and CVE exposure
+- **Manage vulnerabilities** with EPSS risk scoring and patch tracking
+- **Enforce release gates** with structured readiness checklists requiring evidence (pentests, assessments, SBOMs)
+- **Maintain audit trails** of every compliance action for regulators and notified bodies
+- **Organize evidence** in one place for conformity assessments and CE marking
 
-## ⚠️ Maturity & Production Readiness
-
-CRANE is **beta software** used in real compliance engagements. Core modules (product registry, SBOM analysis, vulnerability tracking) are stable and production-ready. Some advanced features (substantial change assessment, automated integrations) are still evolving.
-
-**Before deploying to production:**
-- Review the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/installation.html) thoroughly
-- Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
-- Set strong database and secret key values (see [.env.example](.env.example))
-- Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
-- Regularly apply security updates to OS and dependencies
-- Have a backup and recovery procedure in place
-
-**Not recommended for:** Fully unattended production use without a designated operator. Plan for at least one person to monitor logs and handle database migrations during upgrades.
+All data stays on your infrastructure. No external API calls, no vendor lock-in, fully auditable.
 
 ---
 
-Control CRA compliance via an up-to-date dashboard with the most important information.
+## Key Features
 
-![CRANE Dashboard](.github/assets/Main_dashboard.png)
-
----
-
-Comprehensive overview of products with required CRA properties and justifications.
-
-![Product Inventory](.github/assets/productInventory.png)
+| Feature | What it does |
+|---|---|
+| **Product Registry** | Track products, versions, releases, and support periods |
+| **SBOM Analysis** | Quality scoring, CRA validation, NTIA compliance, component diffing |
+| **Vulnerability Management** | CVE tracking, EPSS scoring, VEX assessments, patch workflows |
+| **Release Gates** | Mandatory readiness checklist with attached evidence before shipping |
+| **CRA Compliance Matrix** | Map requirements (Annex I) to products with evidence links |
+| **Audit Trail** | Immutable, timestamped log of every action (regulatory proof) |
+| **Risk Assessments** | STRIDE/TARA methodology support with approval workflows |
+| **Team Collaboration** | Multi-user, role-based access, task assignment, commenting |
+| **LDAP/AD Integration** | Enterprise identity management via Active Directory or OpenLDAP |
+| **Data Export** | Full compliance package for notified bodies, with zero vendor lock-in |
 
 ---
 
@@ -50,6 +49,38 @@ Comprehensive overview of products with required CRA properties and justificatio
 | **Consultants** | Deploy a dedicated instance per client engagement; portable data export at project close |
 | **Education & research** | Free, open source, fully documented — ideal for CRA training and academic research |
 | **Critical infrastructure operators** | Self-hosted with no external data sharing; LDAP/AD integration for enterprise environments |
+
+---
+
+## Screenshots
+
+Control CRA compliance via an up-to-date dashboard with the most important information.
+
+![CRANE Dashboard](.github/assets/Main_dashboard.png)
+
+Comprehensive overview of products with required CRA properties and justifications.
+
+![Product Inventory](.github/assets/productInventory.png)
+
+---
+
+## ⚠️ Maturity & Production Readiness
+
+CRANE is **beta software** currently used in real compliance engagements. **Core modules are stable and production-ready:**
+- Product registry, SBOM analysis, vulnerability tracking, audit logs, release gates
+
+**Some advanced features are still evolving:**
+- Substantial change assessment, automated integrations, advanced reporting
+
+**Before deploying to production:**
+- Review the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/docs/installation.html) thoroughly
+- Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
+- Set strong database and secret key values (see [.env.example](.env.example))
+- Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
+- Regularly apply security updates to OS and dependencies
+- Have a backup and recovery procedure in place
+
+**Not recommended for:** Fully unattended production use without a designated operator. Plan for at least one person to monitor logs and handle database migrations during upgrades.
 
 ---
 
@@ -111,23 +142,16 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ---
 
-## Features
+## Documentation
 
-| Area | What it does |
-|---|---|
-| **Product registry** | Track products, versions, releases, and support periods |
-| **Release gates** | Structured readiness checklist with evidence before every release |
-| **SBOM analysis** | Quality scoring, CRA validation, NTIA compliance, diff view |
-| **Vulnerability management** | PSIRT workflow, CVE tracking, EPSS scoring, VEX assessments |
-| **Security operations** | Advisories, CVD policies, update history, incoming report triage |
-| **Risk assessments** | STRIDE / TARA / custom methodology, approval workflow |
-| **CRA Annex I matrix** | Requirement coverage map per product with evidence links |
-| **Substantial changes** | Change assessment and re-conformity tracking |
-| **Lifecycle alerts** | End-of-support monitoring with configurable thresholds |
-| **Audit trail** | Immutable, timestamped log of every action |
-| **Technical documentation** | One-click export ready for conformity assessment |
-| **Team collaboration** | Multi-user platform, task assignment, commenting |
-| **RBAC + LDAP** | Role-based access control, Active Directory / OpenLDAP integration |
+**Complete guides and operational reference:**
+
+- 📖 [Installation & Deployment](https://cra-norm-engine.github.io/crane/docs/installation.html) — System requirements, quick start, production setup, TLS, upgrades
+- 🗄️ [Database Implementation](https://cra-norm-engine.github.io/crane/docs/database.html) — Backups, scaling, performance tuning, migrations
+- 📤 [File Upload & Management](https://cra-norm-engine.github.io/crane/docs/file-upload.html) — SBOM processing, evidence attachments, storage limits
+- ⚙️ [Configuration & Deployment](https://cra-norm-engine.github.io/crane/docs/configuration.html) — Environment variables, Docker services, LDAP setup, hardening
+- 🚀 [Quick Start](https://cra-norm-engine.github.io/crane/docs/quickstart.html) — Get running in 5 minutes with one-liners
+- 📚 [Full Documentation Site](https://cra-norm-engine.github.io/crane/)
 
 ---
 
