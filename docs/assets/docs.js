@@ -43,6 +43,8 @@
     ]},
     { label: "Operations", items: [
       { t: "Configuration & Deployment", f: "configuration.html", i: "config" },
+      { t: "Database Implementation", f: "database.html", i: "api" },
+      { t: "File Upload & Management", f: "file-upload.html", i: "api" },
       { t: "API Reference", f: "api.html", i: "api" }
     ]},
     { label: "Help", items: [

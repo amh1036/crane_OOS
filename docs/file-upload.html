@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRANE Docs — File Upload & Management</title>
+  <meta name="description" content="File upload capabilities in CRANE: SBOMs, risk assessments, pentests, evidence documents. Storage, limits, security, and data retention.">
+  <link rel="stylesheet" href="assets/docs.css">
+  <script>(function(){try{var t=localStorage.getItem('crane-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+  <div class="layout" id="doc-root">
+    <main class="content">
+      <article class="article">
+        <p class="eyebrow">Operations</p>
+        <h1>File Upload & Management</h1>
+        <p class="lead">CRANE allows teams to upload and attach evidence documents throughout the compliance lifecycle: SBOMs, risk assessments, pentests, security reports, and more. This guide covers upload capabilities, storage, limits, and best practices.</p>
+
+        <h2 id="supported-files">Supported File Types</h2>
+        <p>CRANE supports uploads in these categories:</p>
+
+        <h3>SBOM Documents</h3>
+        <ul>
+          <li><strong>CycloneDX</strong> (.json, .xml) — NTIA-compliant component manifests</li>
+          <li><strong>SPDX</strong> (.json, .rdf, .tv) — Standard Package Data Exchange format</li>
+          <li>Analyzed for: completeness, component count, license coverage, CVE matches</li>
+        </ul>
+
+        <h3>Evidence & Compliance Documents</h3>
+        <ul>
+          <li><strong>Risk Assessments</strong> (.pdf, .docx) — STRIDE, TARA, or custom methodology documentation</li>
+          <li><strong>Penetration Test Reports</strong> (.pdf) — Third-party security assessment results</li>
+          <li><strong>Architecture Diagrams</strong> (.pdf, .png) — System design and data flow</li>
+          <li><strong>Threat Models</strong> (.pdf, .xlsx) — Risk matrices and mitigation tracking</li>
+          <li><strong>Incident Reports</strong> (.pdf, .docx) — Security incident documentation</li>
+          <li><strong>Audit Logs & Evidence</strong> (.csv, .xlsx) — System logs, deployment records</li>
+        </ul>
+
+        <h3>Configuration & Policy Documents</h3>
+        <ul>
+          <li><strong>CVD Policy</strong> (.pdf, .txt) — Coordinated Vulnerability Disclosure policy</li>
+          <li><strong>Security Policy</strong> (.pdf, .docx) — Product security statement</li>
+          <li><strong>Support Lifecycle</strong> (.xlsx) — Release support periods and EOL dates</li>
+        </ul>
+
+        <div class="callout">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
+          <div><p>Not seeing a file type you need? CRANE also accepts generic document uploads (.pdf, .docx, .pptx, .txt) attached to any product, release, or assessment for ad-hoc evidence linking.</p></div>
+        </div>
+
+        <h2 id="storage">Storage & Limits</h2>
+
+        <h3>Storage Location</h3>
+        <p>Uploaded files are stored in the backend container at:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Path</div>
+          <pre><code">/workspace/backend/uploads/</code></pre>
+        </div>
+
+        <p>For Docker deployments, this path can be mapped to persistent storage:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>docker-compose.prod.yml</div>
+          <pre><code>backend:
+  volumes:
+    - crane_uploads:/workspace/backend/uploads
+volumes:
+  crane_uploads:
+    driver: local</code></pre>
+        </div>
+
+        <h3>File Size Limits</h3>
+        <p>Default limits (configurable):</p>
+        <ul>
+          <li><strong>Single file:</strong> 500 MB (e.g., large SBOM database exports)</li>
+          <li><strong>Per release:</strong> No hard limit, but recommended &lt;2 GB total</li>
+          <li><strong>Per product:</strong> Unlimited (but consider storage capacity)</li>
+        </ul>
+
+        <p>To adjust limits, set in <code>.env</code>:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span">.env</div>
+          <pre><code">BACKEND_MAX_UPLOAD_SIZE_MB=1000  # Increase single file limit to 1 GB</code></pre>
+        </div>
+
+        <h3>Disk Usage Planning</h3>
+        <p>Estimate storage needs:</p>
+        <ul>
+          <li><strong>Small deployment (&lt;50 products):</strong> 10-20 GB sufficient</li>
+          <li><strong>Medium (50-500 products):</strong> 50-100 GB recommended</li>
+          <li><strong>Large (&gt;500 products):</strong> 200+ GB; plan for growth</li>
+        </ul>
+
+        <p>Monitor upload volume:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code">du -sh /workspace/backend/uploads/  # Check total upload disk usage</code></pre>
+        </div>
+
+        <h2 id="security">Security & Data Retention</h2>
+
+        <h3>Access Control</h3>
+        <p>File access is tied to <strong>product-level permissions</strong>:</p>
+        <ul>
+          <li>Only users with <strong>read access</strong> to a product can view its attachments</li>
+          <li>Only users with <strong>edit access</strong> can upload or delete files</li>
+          <li>Audit log records all file uploads and downloads with timestamps and user IDs</li>
+        </ul>
+
+        <h3>Encryption at Rest</h3>
+        <p>Files are stored unencrypted on the filesystem by default. For sensitive compliance data, consider:</p>
+        <ul>
+          <li><strong>Full-disk encryption</strong> (host OS level, LUKS, BitLocker)</li>
+          <li><strong>Container storage encryption</strong> (Docker secrets, encrypted volumes)</li>
+          <li><strong>Cloud storage</strong> (AWS S3 with encryption, Azure Blob Storage with TDE)</li>
+        </ul>
+
+        <h3>Data Retention Policy</h3>
+        <p>Files are kept <strong>indefinitely</strong> by default. Implement retention policies to manage storage:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span">Cleanup old uploads (cron job)</div>
+          <pre><code">#!/bin/bash
+# Delete files not accessed in 2 years
+find /workspace/backend/uploads -atime +730 -delete</code></pre>
+        </div>
+
+        <p>Alternatively, export compliance packages periodically and archive them to cold storage (S3 Glacier, Azure Archive).</p>
+
+        <h2 id="sbom-handling">SBOM Processing</h2>
+
+        <h3>Upload & Analysis</h3>
+        <p>When you upload an SBOM:</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">CRANE parses the document</div>
+            <p>Extracts components, versions, licenses, and vulnerability data.</p>
+          </li>
+          <li>
+            <div class="step-title">Quality scoring</div>
+            <p>Evaluates completeness (% of components with versions, licenses, hashes).</p>
+          </li>
+          <li>
+            <div class="step-title">CRA validation</div>
+            <p>Checks compliance against NTIA minimum elements and CRA Annex I requirements.</p>
+          </li>
+          <li>
+            <div class="step-title">CVE cross-reference</div>
+            <p>Matches components against OSV and NVD databases to flag known vulnerabilities.</p>
+          </li>
+          <li>
+            <div class="step-title">Diff against previous</div>
+            <p>Highlights new/changed/removed components compared to the last release's SBOM.</p>
+          </li>
+        </ol>
+
+        <h3>SBOM Management</h3>
+        <p>You can upload multiple SBOMs per release (e.g., firmware + dependencies). CRANE tracks:</p>
+        <ul>
+          <li>Upload date and user</li>
+          <li>File size and format (CycloneDX vs SPDX)</li>
+          <li>Quality score and CRA compliance status</li>
+          <li>Associated vulnerabilities and their EPSS scores</li>
+        </ul>
+
+        <p><strong>To diff two SBOMs:</strong> Upload the new SBOM and CRANE automatically compares it to the previous version, showing:</p>
+        <ul>
+          <li>New components added</li>
+          <li>Versions upgraded or downgraded</li>
+          <li>Components removed (end-of-life dependencies)</li>
+          <li>License changes</li>
+        </ul>
+
+        <h2 id="risk-assessment">Risk Assessment & Evidence Attachments</h2>
+
+        <h3>Linking Evidence to Assessments</h3>
+        <p>For each risk assessment or release gate:</p>
+        <ul>
+          <li>Attach the assessment document (PDF of the STRIDE model, Excel threat matrix, etc.)</li>
+          <li>Attach approval sign-off (email, scanned form, PDF signature)</li>
+          <li>Attach remediation evidence (CVE patch logs, security update proof)</li>
+          <li>Attach pentesting report (external or internal security assessment)</li>
+        </ul>
+
+        <p>Files are versioned — you can upload a new assessment document and the old one remains in the history for audit purposes.</p>
+
+        <h3>Audit Trail</h3>
+        <p>Every file action is logged:</p>
+        <ul>
+          <li>Who uploaded the file (user ID)</li>
+          <li>When (timestamp to the second)</li>
+          <li>What type (SBOM, risk assessment, pentest, etc.)</li>
+          <li>File name and size</li>
+          <li>Who accessed/downloaded it and when</li>
+        </ul>
+
+        <h2 id="export">Exporting & Sharing Files</h2>
+
+        <h3>Download Individual Files</h3>
+        <p>Click "Download" on any file attachment in CRANE to retrieve it. All downloads are logged.</p>
+
+        <h3>Export Full Compliance Package</h3>
+        <p>CRANE offers a "full export" feature that packages all product data + attachments:</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Navigate to Product → Export</div>
+            <p>Select what to include: product metadata, releases, SBOMs, risk assessments, audit log.</p>
+          </li>
+          <li>
+            <div class="step-title">Download ZIP</div>
+            <p>CRANE generates a ZIP containing JSON/CSV + all attachments in a folder structure.</p>
+          </li>
+          <li>
+            <div class="step-title">Use for Notified Body</div>
+            <p>Share the complete package with auditors, regulators, or customers. All evidence is together.</p>
+          </li>
+        </ol>
+
+        <h2 id="troubleshooting">Troubleshooting File Issues</h2>
+
+        <h3>Upload fails with "file too large"</h3>
+        <p><strong>Solution:</strong> Increase the limit in <code>.env</code>:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span">.env</div>
+          <pre><code">BACKEND_MAX_UPLOAD_SIZE_MB=2000</code></pre>
+        </div>
+        <p>Then restart the backend.</p>
+
+        <h3>Disk space running out</h3>
+        <p><strong>Solution:</strong> Archive old uploads and remove them from the live filesystem:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span">Terminal</div>
+          <pre><code">tar -czf /archive/uploads-2025.tar.gz /workspace/backend/uploads/
+rm -rf /workspace/backend/uploads/*  # Only after backup!</code></pre>
+        </div>
+
+        <h3>SBOM upload succeeds but shows "invalid CycloneDX"</h3>
+        <p><strong>Solution:</strong> Validate the SBOM format:</p>
+        <ul>
+          <li>Use <a href="https://cyclonedx.org/tools/">CycloneDX schema validator</a> to check XML/JSON</li>
+          <li>Ensure it includes the required `<components>` section</li>
+          <li>Check that component versions are strings, not numbers</li>
+        </ul>
+
+        <hr>
+
+        <div class="card-grid">
+          <a class="card" href="database.html"><h3>Database Operations →</h3><p>Backups, scaling, performance, PostgreSQL setup.</p></a>
+          <a class="card" href="configuration.html"><h3>Configuration →</h3><p>Environment variables, security policies, Trivy.</p></a>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script>window.CRANE_PAGE = "file-upload.html";</script>
+  <script src="assets/docs.js"></script>
+</body>
+</html>

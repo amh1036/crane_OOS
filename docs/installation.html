@@ -284,7 +284,7 @@ VITE_API_BASE_URL=https://compliance.example.com/api/v1</code></pre>
             <div class="step-title">Create a Caddyfile</div>
             <p>Replace <code>compliance.example.com</code> with your actual domain.</p>
             <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span">/etc/caddy/Caddyfile (or ~/Caddyfile)</div>
+              <div class="code-title"><span class="dot"></span>/etc/caddy/Caddyfile (or ~/Caddyfile)</div>
               <pre><code>compliance.example.com {
   # Serve the Vue app (frontend)
   @frontend {
@@ -461,19 +461,33 @@ docker compose -f docker-compose.prod.yml logs backend</code></pre>
             <p>Check <a href="https://github.com/cra-norm-engine/crane/blob/main/CHANGELOG.md">CHANGELOG.md</a> for any migration steps required.</p>
           </li>
           <li>
+            <div class="step-title">Navigate to your CRANE directory</div>
+            <p>You must run all upgrade commands <strong>inside the CRANE folder</strong> where <code>docker-compose.yml</code> and <code>docker-compose.prod.yml</code> live:</p>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>cd ~/Desktop/crane  # or wherever you installed CRANE
+ls -la  # verify you see docker-compose.yml, .git/, backend/, etc.</code></pre>
+            </div>
+          </li>
+          <li>
             <div class="step-title">Pull latest code or images</div>
-            <p><strong>For development:</strong></p>
+            <p><strong>For development (inside CRANE folder):</strong></p>
             <div class="code-block titled">
               <div class="code-title"><span class="dot"></span>Terminal</div>
               <pre><code>git pull origin main
 docker compose up -d --build</code></pre>
             </div>
-            <p><strong>For production:</strong></p>
+            <p><strong>For production (inside CRANE folder):</strong></p>
             <div class="code-block titled">
               <div class="code-title"><span class="dot"></span>Terminal</div>
               <pre><code>docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d</code></pre>
             </div>
+            <p><strong>What happens:</strong></p>
+            <ul>
+              <li><strong>Development:</strong> `git pull` downloads code; `--build` recompiles Docker image from source</li>
+              <li><strong>Production:</strong> `pull` downloads pre-built images from GitHub Container Registry</li>
+            </ul>
           </li>
           <li>
             <div class="step-title">Run database migrations</div>

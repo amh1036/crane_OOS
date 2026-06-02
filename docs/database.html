@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRANE Docs — Database Implementation & Operations</title>
+  <meta name="description" content="Database design, backup strategies, performance tuning, schema migrations, and operational considerations for PostgreSQL in CRANE.">
+  <link rel="stylesheet" href="assets/docs.css">
+  <script>(function(){try{var t=localStorage.getItem('crane-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+  <div class="layout" id="doc-root">
+    <main class="content">
+      <article class="article">
+        <p class="eyebrow">Operations</p>
+        <h1>Database Implementation & Operations</h1>
+        <p class="lead">CRANE uses PostgreSQL 16 as its single source of truth for all compliance data, audit logs, and configuration. This guide covers database design, backup strategies, scaling, and operational best practices.</p>
+
+        <h2 id="overview">Architecture Overview</h2>
+        <p>CRANE's database stores:</p>
+        <ul>
+          <li><strong>Products & releases</strong> — all product registry data with version history</li>
+          <li><strong>SBOMs & vulnerabilities</strong> — component manifests and CVE tracking</li>
+          <li><strong>Risk assessments</strong> — STRIDE/TARA assessments, approvals, sign-off</li>
+          <li><strong>Audit trail</strong> — immutable log of all user actions with timestamps</li>
+          <li><strong>User accounts & RBAC</strong> — roles, permissions, team memberships</li>
+          <li><strong>Configuration</strong> — deployment settings, policies, notification rules</li>
+        </ul>
+        <p><strong>All state is in the database.</strong> The backend is stateless and can be scaled horizontally without synchronization concerns.</p>
+
+        <h2 id="schema">Database Schema & Migrations</h2>
+        <p>CRANE uses <a href="https://alembic.sqlalchemy.org/">Alembic</a> for schema versioning. Migrations are automatically applied on startup.</p>
+
+        <h3>Automatic Migration on Startup</h3>
+        <p>Every time the backend starts, it automatically runs pending migrations:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>In start.sh</div>
+          <pre><code>alembic upgrade head
+exec uvicorn app.main:app --host 0.0.0.0 --port 8000</code></pre>
+        </div>
+        <p>This means <strong>zero downtime for schema changes</strong> — just restart the backend and migrations apply automatically.</p>
+
+        <h3>Custom Migrations</h3>
+        <p>To add a custom migration (e.g., adding a new column, creating an index):</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code">cd backend
+alembic revision --autogenerate -m "add_column_description"
+# Edit alembic/versions/xxxx_add_column_description.py
+alembic upgrade head  # test locally
+git add alembic/versions/
+git commit -m "chore(db): add column description"</code></pre>
+        </div>
+
+        <h2 id="backups">Backup Strategy</h2>
+        <div class="callout warn">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+          <div><p><strong>Backups are critical.</strong> A database loss is a compliance disaster. Implement automated daily backups with off-site storage and test restoration regularly.</p></div>
+        </div>
+
+        <h3>Daily Backup with pg_dump</h3>
+        <p>Backup the entire database daily using PostgreSQL's native dump format:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Backup script (daily via cron)</div>
+          <pre><code>#!/bin/bash
+BACKUP_DIR="/backups/crane"
+DATE=$(date +%Y-%m-%d_%H-%M-%S)
+docker compose exec -T postgres pg_dump -U postgres cra_compliance | gzip > $BACKUP_DIR/crane-$DATE.sql.gz
+# Keep 30 days of backups
+find $BACKUP_DIR -mtime +30 -delete</code></pre>
+        </div>
+
+        <h3>Restore from Backup</h3>
+        <p>To restore from a backup:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code"># Stop the backend (but keep DB running)
+docker compose down backend
+
+# Restore the backup
+gunzip < /backups/crane/crane-2026-06-02.sql.gz | docker compose exec -T postgres psql -U postgres cra_compliance
+
+# Restart the backend
+docker compose up -d backend</code></pre>
+        </div>
+
+        <h2 id="performance">Performance Tuning</h2>
+
+        <h3>Indexes</h3>
+        <p>CRANE automatically creates indexes on frequently queried columns (product IDs, timestamps, user IDs). For custom queries or high-volume deployments, add targeted indexes:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>SQL</div>
+          <pre><code>-- Create index on vulnerability CVE lookups (if slow)
+CREATE INDEX idx_vulnerabilities_cve ON vulnerabilities(cve_id);
+
+-- Create composite index for audit log range queries
+CREATE INDEX idx_audit_log_user_created ON audit_log(user_id, created_at DESC);</code></pre>
+        </div>
+
+        <h3>Monitoring Slow Queries</h3>
+        <p>Enable PostgreSQL slow query logging to identify bottlenecks:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Modify docker-compose.prod.yml</div>
+          <pre><code>postgres:
+  environment:
+    POSTGRES_INIT_ARGS: "-c log_min_duration_statement=1000"  # Log queries >1 second</code></pre>
+        </div>
+        <p>Then check logs:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code>docker compose logs postgres | grep "duration:"</code></pre>
+        </div>
+
+        <h2 id="scaling">Scaling Considerations</h2>
+
+        <h3>Single-Instance (Most Deployments)</h3>
+        <p>For organizations &lt;500 users with &lt;500 products, a single PostgreSQL instance is sufficient. Allocate:</p>
+        <ul>
+          <li><strong>RAM:</strong> 2-4 GB</li>
+          <li><strong>Disk:</strong> 50-100 GB (depends on SBOM storage)</li>
+          <li><strong>Connections:</strong> Default 100 is fine; CRANE backend uses connection pooling</li>
+        </ul>
+
+        <h3>High-Volume Deployments (&gt;500 Products)</h3>
+        <p>If scaling beyond single-instance:</p>
+        <ul>
+          <li><strong>Read replicas:</strong> Add PostgreSQL replicas for read-heavy workloads (reporting, dashboards)</li>
+          <li><strong>Connection pooling:</strong> Use <a href="https://www.pgbouncer.org/">PgBouncer</a> to multiplex connections from multiple backend instances</li>
+          <li><strong>Partitioning:</strong> Partition the audit log table by date to keep query performance constant</li>
+        </ul>
+
+        <h3>Horizontal Scaling (Stateless Backend)</h3>
+        <p>CRANE's backend is stateless. Scale by running multiple backend containers with the same database connection string:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>docker-compose.prod.yml</div>
+          <pre><code">backend:
+  replicas: 3  # Run 3 backend instances, all sharing the same DB</code></pre>
+        </div>
+        <p>Use a load balancer (nginx, Caddy, HAProxy) to distribute traffic.</p>
+
+        <h2 id="maintenance">Routine Maintenance</h2>
+
+        <h3>VACUUM and ANALYZE</h3>
+        <p>PostgreSQL requires periodic maintenance to reclaim disk space and update statistics:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Weekly maintenance (add to cron)</div>
+          <pre><code>docker compose exec -T postgres psql -U postgres cra_compliance -c "VACUUM ANALYZE;"</code></pre>
+        </div>
+
+        <h3>Monitor Disk Usage</h3>
+        <p>Watch database size to plan storage capacity:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <pre><code>docker compose exec postgres psql -U postgres cra_compliance -c "SELECT pg_size_pretty(pg_database_size('cra_compliance'));"</code></pre>
+        </div>
+
+        <h2 id="external-database">External PostgreSQL (Managed Services)</h2>
+        <p>You can use a managed PostgreSQL service (AWS RDS, Google Cloud SQL, Azure Database, etc.) instead of the bundled container.</p>
+
+        <h3>Configuration</h3>
+        <p>In <code>.env</code>, set:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>.env</div>
+          <pre><code">BACKEND_DATABASE_URL=postgresql+psycopg://user:password@rds-instance.amazonaws.com:5432/cra_compliance
+# Do NOT run the postgres container from docker-compose</code></pre>
+        </div>
+
+        <p>Then omit the postgres service from docker-compose:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>docker-compose.prod.yml (edit)</div>
+          <pre><code"># Comment out the postgres service entirely
+# postgres:
+#   image: postgres:16-alpine
+#   ...</code></pre>
+        </div>
+
+        <h3>Managed Service Considerations</h3>
+        <ul>
+          <li><strong>Backups:</strong> Rely on your cloud provider's automated backups</li>
+          <li><strong>Network:</strong> Ensure the database is in a private subnet, not publicly accessible</li>
+          <li><strong>SSL/TLS:</strong> Most managed services enforce encrypted connections — configure the connection string accordingly</li>
+          <li><strong>Cost:</strong> Managed databases are more expensive but reduce operational burden</li>
+        </ul>
+
+        <hr>
+
+        <div class="card-grid">
+          <a class="card" href="configuration.html"><h3>Configuration →</h3><p>Environment variables, LDAP setup, Trivy integration.</p></a>
+          <a class="card" href="installation.html"><h3>Installation Guide →</h3><p>System requirements, backups, troubleshooting.</p></a>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script>window.CRANE_PAGE = "database.html";</script>
+  <script src="assets/docs.js"></script>
+</body>
+</html>
