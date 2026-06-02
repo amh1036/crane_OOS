@@ -134,7 +134,6 @@
     var toc = document.getElementById("tocList");
     if (!toc) return;
     if (!heads.length) { toc.innerHTML = '<div class="toc-empty">\u2014</div>'; return; }
-    var links = "";
     heads.forEach(function (h) {
       if (!h.id) {
         h.id = h.textContent.trim().toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
@@ -144,12 +143,8 @@
       a.href = "#" + h.id; a.className = "anchor"; a.textContent = "#";
       a.setAttribute("aria-label", "Link to section");
       h.appendChild(a);
-      var sub = h.tagName === "H3" ? " sub" : "";
-      var label = h.firstChild ? h.textContent.replace(/#$/, "").trim() : h.textContent;
-      links += '<a class="' + ("toc-item" + sub) + '" href="#" + ' + '"' + '" data-id="' + h.id + '">' + label + "</a>";
     });
-    // build cleanly (avoid the messy concat above)
-    links = "";
+    var links = "";
     heads.forEach(function (h) {
       var sub = h.tagName === "H3" ? " sub" : "";
       var label = h.textContent.replace(/#$/, "").trim();
@@ -238,6 +233,24 @@
     });
   }
 
+  // ---- re-apply URL fragment after the DOM is rebuilt ----
+  // mount() replaces #doc-root's innerHTML, which destroys/recreates the
+  // element the browser had scrolled to on load (and reflows everything as
+  // the sidebar + topbar are inserted). The browser does not re-scroll to the
+  // hash after a manual innerHTML change, so cross-page deep links such as
+  // concepts.html#sbom would land at the wrong offset. Re-apply it here once
+  // the layout is final. We re-run on window 'load' too, in case images above
+  // the target shift layout as they finish loading.
+  function applyHashScroll() {
+    if (!location.hash) return;
+    var id;
+    try { id = decodeURIComponent(location.hash.slice(1)); }
+    catch (e) { id = location.hash.slice(1); }
+    var target = id && document.getElementById(id);
+    if (!target) return;
+    requestAnimationFrame(function () { target.scrollIntoView(); });
+  }
+
   // ---- mount ----
   function mount() {
     var root = document.getElementById("doc-root");
@@ -275,6 +288,10 @@
     wireSearch();
     wireCopy();
     wireMobile();
+
+    // The DOM has been rebuilt — restore the deep-link scroll position.
+    applyHashScroll();
+    window.addEventListener("load", applyHashScroll);
   }
 
   if (document.readyState === "loading") {
