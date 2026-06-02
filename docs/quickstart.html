@@ -16,6 +16,11 @@
         <h1>Quick Start</h1>
         <p class="lead">Get a working CRANE instance running on your own machine. The installer downloads CRANE, generates a secure configuration automatically, and starts every service for you.</p>
 
+        <div class="callout">
+          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
+          <div><p><strong>For system requirements, pre-flight checks, production deployment, or TLS setup,</strong> see the <a href="installation.html">Installation & Deployment Guide</a>. This Quick Start is for local testing only.</p></div>
+        </div>
+
         <div class="callout tip">
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>
           <div>
@@ -52,32 +57,12 @@
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
           <div>
             <span class="callout-title">Run install scripts with care</span>
-            <p>Piping a remote script straight into a shell runs it immediately. If you prefer to review it first, open <code>install.sh</code> / <code>install.ps1</code> on GitHub, or follow the manual steps below.</p>
+            <p>Piping a remote script straight into a shell runs it immediately. If you prefer to review it first, see the <a href="installation.html#scripts">Installation Guide → Understanding the Install Scripts</a> section for detailed information and safe execution steps.</p>
           </div>
         </div>
 
-        <h2>Manual installation</h2>
-        <p>Prefer to drive Docker Compose yourself? The installer is just a convenience wrapper around these steps.</p>
-        <ol class="steps">
-          <li>
-            <div class="step-title">Clone the repository</div>
-            <div class="code-block"><pre><code><span class="c-cmd">git</span> clone https://github.com/cra-norm-engine/crane.git
-<span class="c-cmd">cd</span> crane</code></pre></div>
-          </li>
-          <li>
-            <div class="step-title">Create your environment file</div>
-            <div class="code-block"><pre><code><span class="c-cmd">cp</span> .env.example .env</code></pre></div>
-            <p>Then edit <code>.env</code> and set, at minimum, <code>BACKEND_SECRET_KEY</code> (32+ characters) and <code>POSTGRES_PASSWORD</code>.</p>
-          </li>
-          <li>
-            <div class="step-title">Generate a strong secret key</div>
-            <div class="code-block"><pre><code><span class="c-cmd">openssl</span> rand -hex 32</code></pre></div>
-          </li>
-          <li>
-            <div class="step-title">Start the stack</div>
-            <div class="code-block"><pre><code><span class="c-cmd">docker</span> compose up -d</code></pre></div>
-          </li>
-        </ol>
+        <h2>Manual setup (for advanced users)</h2>
+        <p>Prefer to control the setup yourself? Clone the repo, configure <code>.env</code>, and run <code>docker compose up -d</code>. For detailed step-by-step instructions, see the <a href="installation.html#dev">Installation Guide → Development Setup</a>.</p>
 
         <h2>Access the app</h2>
         <p>Once the services are healthy, CRANE is available at:</p>
@@ -115,6 +100,7 @@
 
         <h2>Next steps</h2>
         <div class="card-grid">
+          <a class="card" href="installation.html"><h4>Installation Guide →</h4><p>System requirements, production deployment, reverse proxy & TLS, upgrades, troubleshooting.</p></a>
           <a class="card" href="concepts.html"><h4>Core Concepts →</h4><p>Register your first product, release and SBOM.</p></a>
           <a class="card" href="configuration.html"><h4>Configuration →</h4><p>Environment variables, LDAP, Trivy and production hardening.</p></a>
         </div>
