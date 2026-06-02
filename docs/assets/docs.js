@@ -21,14 +21,16 @@
     api:      '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
     faq:      '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/>',
     contrib:  '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 9v6a3 3 0 0 0 3 3h6"/>',
-    showcase: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m7 10 3 3 5-5"/>'
+    showcase: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m7 10 3 3 5-5"/>',
+    install:  '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'
   };
 
   // ---- nav model ----
   var NAV = [
     { label: "Getting Started", items: [
       { t: "Overview", f: "index.html", i: "overview" },
-      { t: "Quick Start", f: "quickstart.html", i: "rocket" }
+      { t: "Quick Start", f: "quickstart.html", i: "rocket" },
+      { t: "Installation Guide", f: "installation.html", i: "install" }
     ]},
     { label: "Using CRANE", items: [
       { t: "Core Concepts", f: "concepts.html", i: "concepts" },

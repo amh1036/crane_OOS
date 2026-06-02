@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 Security Vulnerability
+    url: https://github.com/cra-norm-engine/crane/security/advisories
+    about: Report security issues privately via GitHub Security Advisory
+  - name: 📚 Documentation
+    url: https://github.com/cra-norm-engine/crane/blob/main/docs/
+    about: Read deployment guides, API docs, and troubleshooting
+  - name: 💬 Discussions
+    url: https://github.com/cra-norm-engine/crane/discussions
+    about: Ask questions, share ideas, or discuss best practices
+  - name: 📧 Contact
+    url: mailto:cra.norm.engine@gmail.com
+    about: General inquiries or feedback

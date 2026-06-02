@@ -63,9 +63,28 @@ npm run lint
 2. Create a feature branch: `git checkout -b feature/your-feature-name`
 3. Make your changes following the code style below
 4. Ensure all tests pass
-5. Commit using conventional format: `feat(scope): description`
-6. Push and open a pull request against `main`
-7. Wait for CI to pass and a maintainer to review
+5. Commit using conventional format: `feat(scope): description` (see [Commit Message Format](#commit-message-format))
+6. **Sign off on your commits** — add `-s` flag: `git commit -s`
+7. Push and open a pull request against `main`
+8. Update [CHANGELOG.md](CHANGELOG.md) with your changes
+9. Wait for CI to pass and a maintainer to review
+
+### Developer Certificate of Origin (DCO)
+
+By contributing to CRANE, you certify that you wrote the code or have the right to contribute it under the same license. We use the Developer Certificate of Origin (DCO) — a lightweight alternative to a CLA.
+
+To sign off, add the `-s` flag to your commits:
+
+```bash
+git commit -s -m "feat(products): add export to CSV"
+```
+
+This adds a line like:
+```
+Signed-off-by: Your Name <your.email@example.com>
+```
+
+CI will enforce DCO signatures — PRs without signed commits cannot be merged.
 
 ## Code Style
 
@@ -96,6 +115,23 @@ feat(products): add bulk export to CSV
 fix(auth): handle expired refresh token gracefully
 docs(readme): add Docker Compose quickstart
 ```
+
+## Modifying Install Scripts
+
+The shell scripts (`install.sh` and `install.ps1`) are trusted directly by users who pipe them from GitHub to their shell. **Any changes to these scripts must be carefully reviewed.**
+
+Guidelines for changes to install scripts:
+
+- **Minimal scope** — keep scripts focused on clone, configuration, and `docker compose up`
+- **No data destruction** — never include `rm -rf` or similar destructive operations
+- **Clear error messages** — fail fast with helpful diagnostics
+- **Well-commented** — explain each step so reviewers can audit the script
+- **Tested locally** — test on both Linux/macOS and Windows before submitting
+
+**PRs modifying install scripts require:**
+1. Detailed explanation of the change in the PR description
+2. Security review from at least one maintainer before merge
+3. Explicit sign-off (`Signed-off-by`) confirming you've tested the changes
 
 ## Reporting Security Issues
 

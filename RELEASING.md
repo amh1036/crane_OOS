@@ -20,11 +20,15 @@ git pull origin main
 git checkout -b release/v1.2.3
 ```
 
-### 2. Update version references
+### 2. Update version and changelog
 
 Update the version in:
 - `frontend/package.json` → `"version": "1.2.3"`
 - `backend/pyproject.toml` → `version = "1.2.3"`
+
+Update [CHANGELOG.md](CHANGELOG.md):
+- Move the `[Unreleased]` section to a new `[1.2.3] - 2026-06-02` section
+- Keep the unreleased section at the top for future changes
 
 ### 3. Verify everything passes
 
@@ -83,14 +87,29 @@ EOF
 )"
 ```
 
-### 6. Docker image (optional)
+### 6. Build and publish Docker images
 
 ```bash
-docker build -t ghcr.io/cra-norm-engine/crane:v1.2.3 ./backend
-docker push ghcr.io/cra-norm-engine/crane:v1.2.3
-docker tag ghcr.io/cra-norm-engine/crane:v1.2.3 ghcr.io/cra-norm-engine/crane:latest
-docker push ghcr.io/cra-norm-engine/crane:latest
+# Backend image
+docker build -t ghcr.io/cra-norm-engine/crane-backend:v1.2.3 ./backend
+docker push ghcr.io/cra-norm-engine/crane-backend:v1.2.3
+docker tag ghcr.io/cra-norm-engine/crane-backend:v1.2.3 ghcr.io/cra-norm-engine/crane-backend:latest
+docker push ghcr.io/cra-norm-engine/crane-backend:latest
+
+# Frontend image
+docker build -t ghcr.io/cra-norm-engine/crane-frontend:v1.2.3 ./frontend
+docker push ghcr.io/cra-norm-engine/crane-frontend:v1.2.3
+docker tag ghcr.io/cra-norm-engine/crane-frontend:v1.2.3 ghcr.io/cra-norm-engine/crane-frontend:latest
+docker push ghcr.io/cra-norm-engine/crane-frontend:latest
 ```
+
+**Note:** This requires push access to GitHub Container Registry. Configure [Docker authentication](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) first:
+
+```bash
+echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+```
+
+Alternatively, use the GitHub Actions CI workflow (`.github/workflows/release.yml`) which automates this step when a tag is pushed.
 
 ## Hotfix Process
 

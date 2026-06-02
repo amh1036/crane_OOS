@@ -1,3 +1,13 @@
+# ============================================================================
+# CRANE Development Docker Compose Configuration
+# ============================================================================
+# This file is for development only — it includes volume mounts for live
+# code changes and runs with DEBUG=true.
+#
+# For production deployments, use docker-compose.prod.yml instead.
+# See: https://github.com/cra-norm-engine/crane/docs/DEPLOY.md
+# ============================================================================
+
 services:
   postgres:
     image: postgres:16-alpine

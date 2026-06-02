@@ -1,0 +1,31 @@
+# CRANE Repository Code Owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# This file specifies which users or teams should be notified when changes
+# are made to specific parts of the codebase.
+#
+# To customize: Replace @cra-norm-engine/maintainers with your team/org handles
+
+# Global fallback — any changes require review from maintainers
+* @cra-norm-engine/maintainers
+
+# Backend core logic
+/backend/app/ @cra-norm-engine/maintainers
+
+# Frontend components and UI
+/frontend/src/ @cra-norm-engine/maintainers
+
+# Infrastructure and deployment
+/docker-compose*.yml @cra-norm-engine/maintainers
+/backend/Dockerfile @cra-norm-engine/maintainers
+/.github/workflows/ @cra-norm-engine/maintainers
+
+# Documentation and process
+/docs/ @cra-norm-engine/maintainers
+/SECURITY.md @cra-norm-engine/maintainers
+/CONTRIBUTING.md @cra-norm-engine/maintainers
+/RELEASING.md @cra-norm-engine/maintainers
+
+# Install scripts — extra scrutiny
+/install.sh @cra-norm-engine/maintainers
+/install.ps1 @cra-norm-engine/maintainers

@@ -1,0 +1,77 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement", "triage"]
+
+body:
+  - type: checkboxes
+    attributes:
+      label: "Is this already requested?"
+      description: "Please search existing issues first"
+      options:
+        - label: I have searched for existing feature requests
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Problem Statement
+      description: |
+        Describe the problem or use case this feature would solve.
+        What are you trying to accomplish, and what's blocking you?
+      placeholder: |
+        As a [user role], I want to [action] so that [benefit].
+        Currently, we have to [workaround], which is [problem].
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Proposed Solution
+      description: Describe what the feature would look like and how it would work
+      placeholder: |
+        The feature should:
+        - Allow users to ...
+        - Integrate with ...
+        - Display ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Alternatives Considered
+      description: |
+        Describe any alternative solutions or approaches you've considered.
+        Why is the proposed solution better?
+      placeholder: |
+        - Alternative 1: ... (downside: ...)
+        - Alternative 2: ... (downside: ...)
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or examples
+      placeholder: "Links to similar tools, mockups, user feedback, etc."
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: "Impact & Scope"
+      description: "Help us understand the importance and scope"
+      options:
+        - label: "This would improve security or compliance"
+        - label: "This would improve user experience significantly"
+        - label: "This is a blocker for production use"
+        - label: "Multiple users have requested this"
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: "Willingness to Contribute"
+      options:
+        - label: "I would be willing to help implement this feature"
+    validations:
+      required: false

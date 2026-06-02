@@ -1,0 +1,95 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[BUG] "
+labels: ["bug", "triage"]
+
+body:
+  - type: checkboxes
+    attributes:
+      label: "Is this already reported?"
+      description: "Please search existing issues first"
+      options:
+        - label: I have searched for existing issues and this is not a duplicate
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: Clear and concise description of what the bug is
+      placeholder: "When I try to ..., it should ... but instead it ..."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. See the error
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: "The application should ..."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: What actually happened (screenshots, error messages, logs)
+      placeholder: "Error: ... or screenshot of the issue"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: CRANE Version
+      description: What version of CRANE are you using?
+      placeholder: "v0.1.0 or main branch"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Environment
+      description: OS and Docker version (e.g., "Ubuntu 22.04 LTS with Docker Desktop")
+      placeholder: "Ubuntu 22.04 / Docker 24.0.5 / macOS 13.5"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Configuration
+      description: Relevant environment variables or configuration (sanitize secrets)
+      placeholder: |
+        BACKEND_ENVIRONMENT=production
+        BACKEND_DEBUG=false
+        # (omit BACKEND_SECRET_KEY and POSTGRES_PASSWORD)
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Relevant Logs
+      description: Error logs or relevant output (sanitize secrets)
+      render: bash
+      placeholder: |
+        [2026-06-02 10:30:45] ERROR: ...
+        Traceback (most recent call last):
+          ...
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: "Before Submitting"
+      options:
+        - label: I have read the [documentation](https://github.com/cra-norm-engine/crane)
+        - label: I have checked the [troubleshooting guide](https://github.com/cra-norm-engine/crane/docs/DEPLOY.md)
+        - label: I have sanitized all secrets and passwords from my report

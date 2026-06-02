@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRANE Docs — Installation & Deployment Guide</title>
+  <meta name="description" content="Complete installation guide for CRANE, covering system requirements, pre-flight checks, production deployment with TLS, upgrades, and troubleshooting.">
+  <link rel="stylesheet" href="assets/docs.css">
+  <script>
+    (function() {
+      if (localStorage.getItem('crane-theme') === 'dark' ||
+          (!localStorage.getItem('crane-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div class="layout" id="doc-root">
+    <main class="content">
+      <article class="article">
+        <p class="eyebrow">Getting Started</p>
+        <h1>Installation & Deployment Guide</h1>
+        <p class="lead">Complete walkthrough for installing CRANE in development or production, upgrading, and troubleshooting the installation process.</p>
+
+        <h2 id="requirements">System Requirements</h2>
+        <p>CRANE runs on any OS with Docker. Below are the official requirements:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Requirement</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Operating System</strong></td>
+                <td>Linux, macOS 11+, Windows 10/11</td>
+                <td>Any OS with Docker support</td>
+              </tr>
+              <tr>
+                <td><strong>CPU Architecture</strong></td>
+                <td>amd64, arm64</td>
+                <td>Both architectures officially supported</td>
+              </tr>
+              <tr>
+                <td><strong>Docker Engine</strong></td>
+                <td>≥24.0.0</td>
+                <td>Or Docker Desktop 4.18+</td>
+              </tr>
+              <tr>
+                <td><strong>Docker Compose</strong></td>
+                <td>v2 plugin</td>
+                <td>Use <code>docker compose</code> (not <code>docker-compose</code>)</td>
+              </tr>
+              <tr>
+                <td><strong>RAM</strong></td>
+                <td>2 GB minimum free</td>
+                <td>4 GB+ recommended for production</td>
+              </tr>
+              <tr>
+                <td><strong>Disk Space</strong></td>
+                <td>5 GB minimum</td>
+                <td>For images, database, and uploads</td>
+              </tr>
+              <tr>
+                <td><strong>Network Ports</strong></td>
+                <td>5173, 8000, 5432 free</td>
+                <td>See docker-compose.yml for details</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="preflight">Pre-Flight Checks</h2>
+        <p>Before installing CRANE, verify your system is ready:</p>
+        <div class="steps">
+          <ol>
+            <li>
+              <strong>Docker is running:</strong>
+              <pre class="code-block"><code>docker info</code></pre>
+              <p>Should print Docker configuration without errors. On macOS/Windows, start Docker Desktop if you see "Cannot connect to Docker daemon."</p>
+            </li>
+            <li>
+              <strong>Compose v2 is available:</strong>
+              <pre class="code-block"><code>docker compose version</code></pre>
+              <p>Should print v2.x.x. If you see "no such command," upgrade Docker.</p>
+            </li>
+            <li>
+              <strong>Ports 5173, 8000, 5432 are available:</strong>
+              <pre class="code-block"><code># Linux / macOS:
+ss -tlnp | grep -E ':(5173|8000|5432)'
+
+# Windows (in PowerShell):
+netstat -ano | findstr /C:":5173" /C:":8000" /C:":5432"</code></pre>
+              <p>If ports are in use, stop the conflicting service or change the port in <code>.env</code>.</p>
+            </li>
+            <li>
+              <strong>Sufficient disk space:</strong>
+              <pre class="code-block"><code>df -h /  # Shows usage of root filesystem</code></pre>
+              <p>Ensure 5+ GB free space.</p>
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="scripts">Understanding the Install Scripts</h2>
+        <p>CRANE provides convenience install scripts for Linux/macOS and Windows. This section explains what they do, so you can audit and trust them.</p>
+
+        <h3>What the Scripts Do</h3>
+        <p>Both <code>install.sh</code> (bash) and <code>install.ps1</code> (PowerShell) perform the same steps:</p>
+        <div class="steps">
+          <ol>
+            <li><strong>Download the repository</strong> — fetches latest code as a zip from <code>main</code> branch on GitHub</li>
+            <li><strong>Generate secure secrets</strong> — creates <code>.env</code> with random 32-char keys for <code>BACKEND_SECRET_KEY</code> and <code>POSTGRES_PASSWORD</code> using <code>openssl</code> or the OS crypto library</li>
+            <li><strong>Start services</strong> — runs <code>docker compose up -d</code> to build and run containers</li>
+            <li><strong>Wait for health</strong> — polls the health endpoint for up to 120 seconds to confirm startup</li>
+            <li><strong>Print credentials</strong> — shows the default login and access URLs</li>
+          </ol>
+        </div>
+
+        <h3>Security Considerations for Scripts</h3>
+        <div class="callout warn">
+          <p><strong>Important:</strong> Never blindly pipe a remote script into bash or PowerShell. Always review it first:</p>
+        </div>
+
+        <p><strong>Linux / macOS:</strong></p>
+        <pre class="code-block titled" data-title="Review before running">curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh -o install.sh
+cat install.sh  # Review the script
+bash install.sh  # Run only after reviewing</pre>
+
+        <p><strong>Windows (PowerShell):</strong></p>
+        <pre class="code-block titled" data-title="Review before running">irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 -OutFile install.ps1
+Get-Content install.ps1  # Review the script
+.\install.ps1  # Run only after reviewing</pre>
+
+        <h3>What Permissions Do the Scripts Need?</h3>
+        <p>The scripts require:</p>
+        <ul>
+          <li>Execute permission on the script itself</li>
+          <li>Docker daemon access (user must be in the <code>docker</code> group on Linux, or have Docker Desktop running on macOS/Windows)</li>
+          <li>Write permission to the current directory and subdirectories created during clone</li>
+          <li>Network access to GitHub and Docker registries</li>
+        </ul>
+
+        <h2 id="production">Production Deployment</h2>
+        <p>For production environments, use the dedicated <code>docker-compose.prod.yml</code> configuration, which includes hardened settings: no source code mounts, pre-built images, resource limits, and localhost-only database access.</p>
+
+        <div class="steps">
+          <ol>
+            <li>
+              <strong>Clone the repository:</strong>
+              <pre class="code-block"><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></pre>
+            </li>
+            <li>
+              <strong>Create and configure .env:</strong>
+              <pre class="code-block"><code>cp .env.example .env
+# Edit .env and set required values:
+# - POSTGRES_PASSWORD (min 32 random chars)
+# - BACKEND_SECRET_KEY (min 32 random chars)
+# Generate with: openssl rand -hex 32
+nano .env</code></pre>
+
+              <p><strong>Example .env (production):</strong></p>
+              <pre class="code-block"><code>POSTGRES_DB=cra_compliance
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_strong_random_password_here
+BACKEND_ENVIRONMENT=production
+BACKEND_SECRET_KEY=your_strong_random_secret_key_here
+BACKEND_DEBUG=false
+BACKEND_CORS_ORIGINS=https://compliance.example.com
+VITE_API_BASE_URL=https://compliance.example.com/api/v1</code></pre>
+            </li>
+            <li>
+              <strong>Verify configuration:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml config</code></pre>
+              <p>Validates YAML syntax without starting services.</p>
+            </li>
+            <li>
+              <strong>Start services:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
+              <p>First run takes 3–5 minutes while images are pulled and the database initializes.</p>
+            </li>
+            <li>
+              <strong>Verify services are healthy:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml ps</code></pre>
+              <p>All services should show <code>running</code>.</p>
+            </li>
+            <li>
+              <strong>Access the app:</strong>
+              <p>Services are bound to localhost only. Access via a reverse proxy (see next section):</p>
+              <ul>
+                <li>Frontend: <code>http://localhost:5173</code> (via reverse proxy)</li>
+                <li>Backend API: <code>http://localhost:8000/api/v1</code> (via reverse proxy)</li>
+                <li>API docs: <code>http://localhost:8000/docs</code> (via reverse proxy)</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Change default password on first login:</strong>
+              <p>Log in with <code>admin@example.com</code> / <code>admin1234</code>. You will be forced to set a new password on first login.</p>
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="reverse-proxy">Reverse Proxy Setup</h2>
+        <p>Never expose CRANE directly to the internet. Always run behind a reverse proxy with HTTPS/TLS. Below are examples for Nginx and Caddy.</p>
+
+        <h3>Nginx</h3>
+        <pre class="code-block titled" data-title="/etc/nginx/sites-available/crane"># Upstream to CRANE backend
+upstream crane_backend {
+  server localhost:8000;
+}
+
+upstream crane_frontend {
+  server localhost:5173;
+}
+
+# Redirect HTTP → HTTPS
+server {
+  listen 80;
+  server_name compliance.example.com;
+  return 301 https://$server_name$request_uri;
+}
+
+# HTTPS server block
+server {
+  listen 443 ssl http2;
+  server_name compliance.example.com;
+
+  # TLS certificates (generate with Let's Encrypt / Certbot)
+  ssl_certificate /etc/letsencrypt/live/compliance.example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/compliance.example.com/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+
+  # Frontend (Vue app)
+  location / {
+    proxy_pass http://crane_frontend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Backend API
+  location /api/ {
+    proxy_pass http://crane_backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 300s;
+  }
+
+  # Redirect /docs to /api/v1/docs
+  location = /docs {
+    return 301 /api/v1/docs;
+  }
+}</pre>
+
+        <p><strong>Enable and test:</strong></p>
+        <pre class="code-block"><code>sudo ln -s /etc/nginx/sites-available/crane /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+# Get TLS cert with Certbot:
+sudo certbot --nginx -d compliance.example.com</code></pre>
+
+        <h3>Caddy</h3>
+        <p>Caddy is simpler — it auto-renews TLS certificates for you.</p>
+        <pre class="code-block titled" data-title="Caddyfile"># Save to /etc/caddy/Caddyfile or run as: caddy run
+
+compliance.example.com {
+  # Frontend
+  @frontend {
+    not path /api/*
+    not path /docs*
+  }
+  handle @frontend {
+    reverse_proxy localhost:5173
+  }
+
+  # Backend API
+  handle /api/* {
+    reverse_proxy localhost:8000
+  }
+
+  # Redirect /docs to /api/v1/docs
+  handle /docs {
+    redir /api/v1/docs permanent
+  }
+}</code></pre>
+
+        <p><strong>Run Caddy:</strong></p>
+        <pre class="code-block"><code>caddy run</code></pre>
+        <p>Caddy automatically obtains and renews TLS certificates from Let's Encrypt.</p>
+
+        <h2 id="upgrade">Upgrading CRANE</h2>
+        <p>Keep CRANE updated to get security fixes and new features.</p>
+
+        <div class="callout tip">
+          <p><strong>Before upgrading:</strong> Check the <a href="https://github.com/cra-norm-engine/crane/blob/main/CHANGELOG.md">CHANGELOG.md</a> for breaking changes or migration steps required.</p>
+        </div>
+
+        <div class="steps">
+          <ol>
+            <li>
+              <strong>Pull the latest code / images:</strong>
+              <p><em>For development (docker-compose.yml):</em></p>
+              <pre class="code-block"><code>git pull origin main
+docker compose up -d --build</code></pre>
+
+              <p><em>For production (docker-compose.prod.yml):</em></p>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d</code></pre>
+            </li>
+            <li>
+              <strong>Run database migrations:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml exec backend alembic upgrade head</code></pre>
+              <p>Always safe to run — Alembic only applies unapplied migrations.</p>
+            </li>
+            <li>
+              <strong>Verify health:</strong>
+              <pre class="code-block"><code">docker compose -f docker-compose.prod.yml ps
+curl http://localhost:8000/api/v1/health</code></pre>
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="rollback">Rolling Back</h2>
+        <p>If an upgrade breaks something, you can roll back to the previous version.</p>
+
+        <div class="steps">
+          <ol>
+            <li>
+              <strong>Stop services:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml down</code></pre>
+            </li>
+            <li>
+              <strong>Update to the previous version:</strong>
+              <pre class="code-block"><code># Option A: git tag
+git checkout v0.1.0  # or the previous version tag
+
+# Option B: docker image tag (if using GHCR)
+# Edit docker-compose.prod.yml: change image tag from 'latest' to 'v0.1.0'</code></pre>
+            </li>
+            <li>
+              <strong>Start services:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
+            </li>
+            <li>
+              <strong>Optional: rollback database migrations:</strong>
+              <pre class="code-block"><code>docker compose -f docker-compose.prod.yml exec backend alembic downgrade -1</code></pre>
+              <p>Only needed if the previous version requires an older schema.</p>
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="uninstall">Uninstalling CRANE</h2>
+        <p>To remove CRANE completely:</p>
+
+        <div class="callout warn">
+          <p><strong>Warning:</strong> <code>docker compose down -v</code> deletes the database volume and all data. Only use this if you don't need the data.</p>
+        </div>
+
+        <pre class="code-block"><code># Stop containers and remove volumes (destroys database + uploads)
+docker compose -f docker-compose.prod.yml down -v
+
+# Clean up the directory
+cd ..
+rm -rf crane/</code></pre>
+
+        <p>If you want to preserve the database, take a backup first:</p>
+        <pre class="code-block"><code">docker compose -f docker-compose.prod.yml exec postgres pg_dump -U postgres cra_compliance \
+  > backup.sql</code></pre>
+
+        <h2 id="offline">Offline / Air-Gapped Installation</h2>
+        <p>For environments without internet access, you can pre-pull Docker images and transfer them offline.</p>
+
+        <div class="steps">
+          <ol>
+            <li>
+              <strong>On a machine with internet access:</strong>
+              <pre class="code-block"><code">docker pull ghcr.io/cra-norm-engine/crane-backend:latest
+docker pull ghcr.io/cra-norm-engine/crane-frontend:latest
+docker pull postgres:16-alpine
+
+# Export to tar files
+docker save ghcr.io/cra-norm-engine/crane-backend:latest \
+  -o crane-backend.tar
+docker save ghcr.io/cra-norm-engine/crane-frontend:latest \
+  -o crane-frontend.tar
+docker save postgres:16-alpine -o postgres.tar</code></pre>
+            </li>
+            <li>
+              <strong>Transfer the tar files to the target machine</strong> (USB drive, secure transfer, etc.)
+            </li>
+            <li>
+              <strong>On the target machine (offline):</strong>
+              <pre class="code-block"><code">docker load -i crane-backend.tar
+docker load -i crane-frontend.tar
+docker load -i postgres.tar
+
+# Verify images are loaded
+docker images | grep crane</code></pre>
+            </li>
+            <li>
+              <strong>Clone or copy the CRANE repository</strong> (also offline) and run:
+              <pre class="code-block"><code">docker compose -f docker-compose.prod.yml up -d</code></pre>
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="troubleshooting">Installation Troubleshooting</h2>
+
+        <h3>Docker daemon is not running</h3>
+        <pre class="code-block"><code">Error: Cannot connect to Docker daemon</code></pre>
+        <p><strong>Solution:</strong> Start Docker. On macOS/Windows, open Docker Desktop. On Linux, run <code>sudo systemctl start docker</code>.</p>
+
+        <h3>Port 5173, 8000, or 5432 is already in use</h3>
+        <pre class="code-block"><code">Error: bind: address already in use</code></pre>
+        <p><strong>Solution:</strong> Either stop the conflicting service or change the port in <code>.env</code>:</p>
+        <pre class="code-block"><code">BACKEND_PORT=8001  # Use 8001 instead of 8000
+FRONTEND_PORT=5174  # Use 5174 instead of 5173</code></pre>
+
+        <h3>Docker image build failed</h3>
+        <pre class="code-block"><code">Error: failed to build image</code></pre>
+        <p><strong>Solution:</strong> Check Docker is running and you have sufficient disk space. Clean up unused images:</p>
+        <pre class="code-block"><code>docker system prune -a</code></pre>
+
+        <h3>Health check failed / service won't start</h3>
+        <pre class="code-block"><code">unhealthy (exit 1)</code></pre>
+        <p><strong>Solution:</strong> Check service logs:</p>
+        <pre class="code-block"><code">docker compose logs backend  # View backend logs
+docker compose logs postgres  # View database logs</code></pre>
+
+        <h3>First run is very slow (taking >5 minutes)</h3>
+        <p><strong>Cause:</strong> The Trivy vulnerability database is downloading on first run (~200 MB).</p>
+        <p><strong>Solution:</strong> Wait for the database download to complete. Subsequent runs are fast. You can monitor progress:</p>
+        <pre class="code-block"><code>docker compose logs backend | grep -i trivy</code></pre>
+
+        <h3>Can't connect to http://localhost:5173</h3>
+        <p><strong>Solution:</strong> Verify the frontend container is running and healthy:</p>
+        <pre class="code-block"><code>docker compose ps frontend
+docker compose logs frontend</code></pre>
+
+        <div class="callout tip">
+          <p><strong>Need more help?</strong> See <a href="faq.html#troubleshooting">FAQ & Troubleshooting</a> for runtime issues, or open an issue on <a href="https://github.com/cra-norm-engine/crane/issues">GitHub</a>.</p>
+        </div>
+
+        <hr>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">⚙️</div>
+            <h3><a href="configuration.html">Configuration & Deployment</a></h3>
+            <p>Environment variables, Docker services, LDAP setup, production hardening.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🚀</div>
+            <h3><a href="quickstart.html">Quick Start</a></h3>
+            <p>Fast setup guide — get running in minutes with the convenience installer.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📚</div>
+            <h3><a href="concepts.html">Core Concepts</a></h3>
+            <p>Understand CRANE's architecture and terminology.</p>
+          </div>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script>window.CRANE_PAGE = "installation.html";</script>
+  <script src="assets/docs.js"></script>
+</body>
+</html>

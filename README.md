@@ -4,21 +4,29 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![Vue](https://img.shields.io/badge/vue-3-brightgreen)
 ![Docker](https://img.shields.io/badge/docker-compose-blue)
-![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Status](https://img.shields.io/badge/status-beta-orange)
+![CI](https://img.shields.io/github/actions/workflow/status/cra-norm-engine/crane/ci.yml?branch=main)
 
 **Self-hosted compliance management for the EU Cyber Resilience Act.**
 
 CRANE helps manufacturers of products with digital elements meet their CRA obligations — from SBOM analysis and vulnerability tracking to release gates and lifecycle notifications — in one auditable, self-hosted platform.
 
-> **Maturity:** CRANE is in active development and used in real compliance engagements. Core modules are stable. Some advanced features are still evolving. Not yet recommended for fully unattended production use without technical oversight.
-
 ---
-**Online test**
-Do you want to test the tool online without installing it? 
-One instance of the tool is availebl at this address. 
-https://cra-compliance-tool-1.onrender.com
 
-Contact cra.norm.engine@gmail.com to get a time limited username and password
+## ⚠️ Maturity & Production Readiness
+
+CRANE is **beta software** used in real compliance engagements. Core modules (product registry, SBOM analysis, vulnerability tracking) are stable and production-ready. Some advanced features (substantial change assessment, automated integrations) are still evolving.
+
+**Before deploying to production:**
+- Review the [Installation & Deployment Guide](docs/installation.html) thoroughly
+- Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
+- Set strong database and secret key values (see [.env.example](.env.example))
+- Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
+- Regularly apply security updates to OS and dependencies
+- Have a backup and recovery procedure in place
+
+**Not recommended for:** Fully unattended production use without a designated operator. Plan for at least one person to monitor logs and handle database migrations during upgrades.
+
 ---
 
 Control CRA compliance via an up-to-date dashboard with the most important information.
@@ -123,54 +131,103 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ---
 
-## Quick Start
+## Installation
 
-### Linux / macOS
+### Prerequisites
 
-**Prerequisites:**
-- [Docker Desktop](https://docs.docker.com/get-docker/) installed and running
+- [Docker Desktop](https://docs.docker.com/get-docker/) or Docker Engine + Docker Compose
+  - **Windows:** Docker set to **Linux containers** (right-click Docker tray icon to switch)
+- **Git** (optional, for development)
 
-Open a terminal in the folder where you want CRANE installed, then run:
+### Quick Start (Recommended)
+
+Clone the repository and configure:
+
+```bash
+git clone https://github.com/cra-norm-engine/crane.git
+cd crane
+
+# Copy the environment template
+cp .env.example .env
+
+# Edit .env and set these required values:
+# - POSTGRES_PASSWORD (min 32 random characters)
+# - BACKEND_SECRET_KEY (min 32 random characters)
+# Generate strong values: openssl rand -hex 32
+nano .env
+
+# Start all services
+docker compose up -d
+```
+
+The first run takes 3–5 minutes while Docker builds the backend image and downloads the vulnerability database.
+
+**For comprehensive installation guidance** (system requirements, pre-flight checks, troubleshooting, upgrades, air-gapped deployment, reverse proxy setup), see the [Installation & Deployment Guide](docs/installation.html).
+
+### Automated Installation (Optional)
+
+For convenience, we provide shell scripts that automate the clone-and-configure steps:
+
+<details>
+<summary>Linux / macOS</summary>
 
 ```bash
 cd ~/Desktop
 curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
 ```
 
----
+**Note:** Always review shell scripts before piping to bash. You can download and inspect the script first:
 
-### Windows
+```bash
+curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh -o install.sh
+cat install.sh  # Review the script
+bash install.sh
+```
 
-**Prerequisites:**
-- [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) installed and running
-- Docker set to **Linux containers** (right-click Docker tray icon to switch)
+</details>
 
-Open PowerShell in the folder where you want CRANE installed, then run:
+<details>
+<summary>Windows (PowerShell)</summary>
 
 ```powershell
 cd $HOME\Desktop
 irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
 ```
 
----
+Or download and review first:
 
-The installer downloads CRANE, generates a secure configuration automatically, and starts all services. **First run takes 3–5 minutes** while Docker builds the backend image and downloads the vulnerability database.
-
-### Manual installation
-
-<details>
-<summary>Click to expand</summary>
-
-```bash
-git clone https://github.com/cra-norm-engine/crane.git
-cd crane
-cp .env.example .env
-# Edit .env — set BACKEND_SECRET_KEY (min 32 chars) and POSTGRES_PASSWORD
-# Generate a key: openssl rand -hex 32
-docker compose up -d
+```powershell
+irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 -OutFile install.ps1
+Get-Content install.ps1  # Review the script
+.\install.ps1
 ```
 
 </details>
+
+### Production Deployment
+
+For production environments, use the production compose configuration with strict security settings:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+
+**Required before production:**
+
+1. Edit `.env` and set strong, random values for `POSTGRES_PASSWORD` and `BACKEND_SECRET_KEY`
+2. Update `BACKEND_CORS_ORIGINS` to your domain (e.g., `https://compliance.example.com`)
+3. Run behind a reverse proxy with TLS ([nginx](https://nginx.org/), [Caddy](https://caddyserver.com/), etc.)
+4. Restrict database port to localhost-only (already done in `docker-compose.prod.yml`)
+5. See the [Installation & Deployment Guide](docs/installation.html) for system requirements, pre-flight checks, and TLS setup examples
+
+**Key differences from development:**
+
+- No source code volume mounts
+- Pre-built Docker images from GitHub Container Registry
+- Resource limits enforced
+- Database port only accessible from localhost
+- Debug mode disabled
+- Structured logging
 
 ### Access the app
 
@@ -249,7 +306,6 @@ You will be prompted to set a new password on first login.
 - **Issues & feature requests:** [GitHub Issues](https://github.com/cra-norm-engine/crane/issues)
 - **Security vulnerabilities:** See [SECURITY.md](SECURITY.md)
 - **General enquiries:** cra.norm.engine@gmail.com
-- **Slack:** [Link](https://join.slack.com/t/crane-z255551/shared_invite/zt-3zk870lk5-zfaGA4YNJjY9HOcxjSSLBA)  
 
 ---
 
