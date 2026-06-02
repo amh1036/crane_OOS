@@ -18,7 +18,7 @@ CRANE helps manufacturers of products with digital elements meet their CRA oblig
 CRANE is **beta software** used in real compliance engagements. Core modules (product registry, SBOM analysis, vulnerability tracking) are stable and production-ready. Some advanced features (substantial change assessment, automated integrations) are still evolving.
 
 **Before deploying to production:**
-- Review the [Installation & Deployment Guide](docs/installation.html) thoroughly
+- Review the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/installation.html) thoroughly
 - Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
 - Set strong database and secret key values (see [.env.example](.env.example))
 - Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
@@ -162,7 +162,7 @@ docker compose up -d
 
 The first run takes 3–5 minutes while Docker builds the backend image and downloads the vulnerability database.
 
-**For comprehensive installation guidance** (system requirements, pre-flight checks, troubleshooting, upgrades, air-gapped deployment, reverse proxy setup), see the [Installation & Deployment Guide](docs/installation.html).
+**For comprehensive installation guidance** (system requirements, pre-flight checks, troubleshooting, upgrades, air-gapped deployment, reverse proxy setup), see the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/installation.html).
 
 ### Automated Installation (Optional)
 
