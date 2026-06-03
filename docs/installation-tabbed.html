@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRANE Installation Guide — Linux, macOS, Windows</title>
+  <meta name="description" content="Step-by-step installation guide for CRANE with OS-specific instructions for Linux, macOS, and Windows.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f9fafb;
+    }
+
+    body[data-theme="dark"] {
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #000;
+    }
+
+    body[data-theme="dark"] h1 {
+      color: #fff;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    body[data-theme="dark"] .subtitle {
+      color: #aaa;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin: 2rem 0 1.5rem;
+      border-bottom: 2px solid #e5e7eb;
+      flex-wrap: wrap;
+    }
+
+    body[data-theme="dark"] .tab-nav {
+      border-bottom-color: #333;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    body[data-theme="dark"] .tab-button {
+      color: #aaa;
+    }
+
+    .tab-button:hover {
+      color: #000;
+    }
+
+    body[data-theme="dark"] .tab-button:hover {
+      color: #fff;
+    }
+
+    .tab-button.active {
+      color: #0066cc;
+      border-bottom-color: #0066cc;
+    }
+
+    /* Step Container */
+    .step {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    body[data-theme="dark"] .step {
+      background: #2a2a2a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background: #0066cc;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 32px;
+      font-weight: bold;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .step h2 {
+      display: inline-block;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #000;
+    }
+
+    body[data-theme="dark"] .step h2 {
+      color: #fff;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Code Block */
+    .code-block {
+      background: #f3f4f6;
+      border-left: 4px solid #0066cc;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      overflow-x: auto;
+      font-family: "Monaco", "Courier New", monospace;
+      font-size: 0.95rem;
+      color: #000;
+    }
+
+    body[data-theme="dark"] .code-block {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border-left-color: #4a9eff;
+    }
+
+    .code-block code {
+      display: block;
+      white-space: pre;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: #dbeafe;
+      border-left: 4px solid #0066cc;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+
+    body[data-theme="dark"] .info-box {
+      background: #1e3a5f;
+      border-left-color: #4a9eff;
+    }
+
+    .info-box strong {
+      color: #0066cc;
+    }
+
+    body[data-theme="dark"] .info-box strong {
+      color: #4a9eff;
+    }
+
+    /* Warning Box */
+    .warning-box {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+
+    body[data-theme="dark"] .warning-box {
+      background: #5a3a1a;
+      border-left-color: #fbbf24;
+    }
+
+    .warning-box strong {
+      color: #b45309;
+    }
+
+    body[data-theme="dark"] .warning-box strong {
+      color: #fbbf24;
+    }
+
+    /* Success Box */
+    .success-box {
+      background: #dcfce7;
+      border-left: 4px solid #10b981;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+
+    body[data-theme="dark"] .success-box {
+      background: #1a3a2a;
+      border-left-color: #34d399;
+    }
+
+    .success-box strong {
+      color: #047857;
+    }
+
+    body[data-theme="dark"] .success-box strong {
+      color: #34d399;
+    }
+
+    /* Description Text */
+    .step-description {
+      color: #666;
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+
+    body[data-theme="dark"] .step-description {
+      color: #aaa;
+    }
+
+    /* Troubleshooting Section */
+    .troubleshooting {
+      margin-top: 3rem;
+    }
+
+    .troubleshooting h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #000;
+    }
+
+    body[data-theme="dark"] .troubleshooting h2 {
+      color: #fff;
+    }
+
+    .issue {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    body[data-theme="dark"] .issue {
+      background: #2a2a2a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .issue h3 {
+      color: #d32f2f;
+      margin-bottom: 0.5rem;
+    }
+
+    body[data-theme="dark"] .issue h3 {
+      color: #ff6b6b;
+    }
+
+    .issue-description {
+      color: #666;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    body[data-theme="dark"] .issue-description {
+      color: #aaa;
+    }
+
+    /* Links */
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    body[data-theme="dark"] a {
+      color: #4a9eff;
+    }
+
+    /* Terminal Indicator */
+    .terminal-label {
+      display: inline-block;
+      background: #333;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    body[data-theme="dark"] .terminal-label {
+      background: #000;
+    }
+
+    /* Platform Badge */
+    .os-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    body[data-theme="dark"] .os-badge {
+      background: #444;
+      color: #fff;
+    }
+
+    .os-badge.linux {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    body[data-theme="dark"] .os-badge.linux {
+      background: #5a3a1a;
+      color: #fbbf24;
+    }
+
+    .os-badge.macos {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    body[data-theme="dark"] .os-badge.macos {
+      background: #1e3a5f;
+      color: #4a9eff;
+    }
+
+    .os-badge.windows {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    body[data-theme="dark"] .os-badge.windows {
+      background: #1e3a5f;
+      color: #4a9eff;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      z-index: 1000;
+    }
+
+    body[data-theme="dark"] .theme-toggle {
+      background: #2a2a2a;
+      border-color: #444;
+      color: #fff;
+    }
+
+    /* Next Steps */
+    .next-steps {
+      background: #f0f9ff;
+      border-left: 4px solid #0284c7;
+      padding: 1.5rem;
+      border-radius: 4px;
+      margin-top: 2rem;
+    }
+
+    body[data-theme="dark"] .next-steps {
+      background: #0c2342;
+      border-left-color: #38bdf8;
+    }
+
+    .next-steps h3 {
+      color: #0284c7;
+      margin-bottom: 1rem;
+    }
+
+    body[data-theme="dark"] .next-steps h3 {
+      color: #38bdf8;
+    }
+
+    .next-steps ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .next-steps li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .next-steps li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #0284c7;
+    }
+
+    body[data-theme="dark"] .next-steps li:before {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle">🌙</button>
+
+  <div class="container">
+    <h1>🚀 CRANE Installation Guide</h1>
+    <p class="subtitle">Step-by-step setup for Linux, macOS, and Windows</p>
+
+    <!-- Quick Check Section -->
+    <div class="info-box">
+      <strong>Before you start:</strong> Make sure you have Docker installed and at least 5 GB of disk space. See <a href="#verify">Verify Prerequisites</a> below.
+    </div>
+
+    <!-- ========== STEP 1 ========== -->
+    <div class="step">
+      <div><span class="step-number">1</span><h2>Install Docker</h2></div>
+
+      <div class="tab-nav" role="tablist">
+        <button class="tab-button active" data-tab="docker-linux" role="tab">🐧 Linux</button>
+        <button class="tab-button" data-tab="docker-macos" role="tab">🍎 macOS</button>
+        <button class="tab-button" data-tab="docker-windows" role="tab">🪟 Windows</button>
+      </div>
+
+      <!-- Linux -->
+      <div id="docker-linux" class="tab-content active">
+        <p class="step-description">Install Docker Engine and Docker Compose plugin on Ubuntu/Debian:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>sudo apt update
+sudo apt install -y docker.io docker-compose-plugin</code></div>
+        <p class="step-description">Then start Docker and add your user to the docker group:</p>
+        <div class="code-block"><code>sudo systemctl start docker
+sudo usermod -aG docker $USER
+newgrp docker</code></div>
+        <p class="step-description">Verify it works:</p>
+        <div class="code-block"><code>docker run hello-world</code></div>
+        <p class="step-description">You should see a "Hello from Docker!" message.</p>
+      </div>
+
+      <!-- macOS -->
+      <div id="docker-macos" class="tab-content">
+        <p class="step-description">Download and install Docker Desktop for macOS:</p>
+        <ol>
+          <li>Go to <a href="https://docs.docker.com/desktop/install/mac-install/" target="_blank">Docker Desktop for Mac</a></li>
+          <li>Download the version for your chip:
+            <ul>
+              <li><strong>Apple Silicon (M1/M2/M3):</strong> ARM64 version</li>
+              <li><strong>Intel Macs:</strong> Intel x86_64 version</li>
+            </ul>
+          </li>
+          <li>Double-click the downloaded .dmg file</li>
+          <li>Drag Docker.app to the Applications folder</li>
+        </ol>
+        <p class="step-description">Start Docker Desktop from Applications folder. You'll see a Docker icon in the top menu bar when it's running.</p>
+        <p class="step-description">Verify it works by opening Terminal and running:</p>
+        <div class="code-block"><code>docker run hello-world</code></div>
+      </div>
+
+      <!-- Windows -->
+      <div id="docker-windows" class="tab-content">
+        <p class="step-description">Install Docker Desktop for Windows:</p>
+        <ol>
+          <li>Go to <a href="https://docs.docker.com/desktop/install/windows-install/" target="_blank">Docker Desktop for Windows</a></li>
+          <li>Click <strong>Download for Windows</strong></li>
+          <li>Run the installer and follow the prompts</li>
+          <li>When asked about WSL 2: Select <strong>"WSL 2 backend"</strong> (recommended)</li>
+          <li>Restart your computer when prompted</li>
+        </ol>
+        <p class="step-description">After restart, open <strong>PowerShell</strong> and verify it works:</p>
+        <div class="code-block"><code>docker run hello-world</code></div>
+      </div>
+    </div>
+
+    <!-- ========== STEP 2 ========== -->
+    <div class="step">
+      <div><span class="step-number">2</span><h2>Download CRANE</h2></div>
+
+      <div class="tab-nav" role="tablist">
+        <button class="tab-button active" data-tab="download-linux" role="tab">🐧 Linux</button>
+        <button class="tab-button" data-tab="download-macos" role="tab">🍎 macOS</button>
+        <button class="tab-button" data-tab="download-windows" role="tab">🪟 Windows</button>
+      </div>
+
+      <!-- Linux -->
+      <div id="download-linux" class="tab-content active">
+        <p class="step-description">Clone the repository using Git:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></div>
+        <p class="step-description">Or download as ZIP if you don't have Git:</p>
+        <div class="code-block"><code>wget https://github.com/cra-norm-engine/crane/archive/refs/heads/main.zip
+unzip main.zip
+cd crane-main</code></div>
+      </div>
+
+      <!-- macOS -->
+      <div id="download-macos" class="tab-content">
+        <p class="step-description">Clone the repository using Git:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></div>
+        <p class="step-description">Or download as ZIP:</p>
+        <div class="code-block"><code>curl -L https://github.com/cra-norm-engine/crane/archive/refs/heads/main.zip -o crane.zip
+unzip crane.zip
+cd crane-main</code></div>
+      </div>
+
+      <!-- Windows -->
+      <div id="download-windows" class="tab-content">
+        <p class="step-description"><strong>Option A: Using Git</strong></p>
+        <div class="terminal-label">PowerShell</div>
+        <div class="code-block"><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></div>
+        <p class="step-description"><strong>Option B: Using PowerShell (no Git needed)</strong></p>
+        <div class="code-block"><code>Invoke-WebRequest -Uri "https://github.com/cra-norm-engine/crane/archive/refs/heads/main.zip" -OutFile "crane.zip"
+Expand-Archive -Path "crane.zip" -DestinationPath "."
+cd crane-main</code></div>
+      </div>
+    </div>
+
+    <!-- ========== STEP 3 ========== -->
+    <div class="step">
+      <div><span class="step-number">3</span><h2>Configure Environment (.env)</h2></div>
+
+      <div class="tab-nav" role="tablist">
+        <button class="tab-button active" data-tab="env-linux" role="tab">🐧 Linux</button>
+        <button class="tab-button" data-tab="env-macos" role="tab">🍎 macOS</button>
+        <button class="tab-button" data-tab="env-windows" role="tab">🪟 Windows</button>
+      </div>
+
+      <!-- Linux -->
+      <div id="env-linux" class="tab-content active">
+        <p class="step-description">Copy the example configuration:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>cp .env.example .env</code></div>
+        <p class="step-description">Generate two secure random values:</p>
+        <div class="code-block"><code>openssl rand -hex 32
+openssl rand -hex 32</code></div>
+        <p class="step-description">Edit .env with nano:</p>
+        <div class="code-block"><code>nano .env</code></div>
+        <p class="step-description"><strong>Find and update these lines:</strong></p>
+        <div class="code-block"><code>POSTGRES_PASSWORD=<span style="color: #ff6b6b;">paste_first_generated_value_here</span>
+BACKEND_SECRET_KEY=<span style="color: #ff6b6b;">paste_second_generated_value_here</span></code></div>
+        <p class="step-description">Save with <kbd>Ctrl+O</kbd>, then <kbd>Ctrl+X</kbd> to exit.</p>
+      </div>
+
+      <!-- macOS -->
+      <div id="env-macos" class="tab-content">
+        <p class="step-description">Copy the example configuration:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>cp .env.example .env</code></div>
+        <p class="step-description">Generate two secure random values:</p>
+        <div class="code-block"><code>openssl rand -hex 32
+openssl rand -hex 32</code></div>
+        <p class="step-description">Edit .env with nano:</p>
+        <div class="code-block"><code>nano .env</code></div>
+        <p class="step-description"><strong>Find and update these lines:</strong></p>
+        <div class="code-block"><code>POSTGRES_PASSWORD=<span style="color: #ff6b6b;">paste_first_generated_value_here</span>
+BACKEND_SECRET_KEY=<span style="color: #ff6b6b;">paste_second_generated_value_here</span></code></div>
+        <p class="step-description">Save with <kbd>Control+O</kbd>, then <kbd>Control+X</kbd> to exit.</p>
+      </div>
+
+      <!-- Windows -->
+      <div id="env-windows" class="tab-content">
+        <p class="step-description">Copy the example configuration:</p>
+        <div class="terminal-label">PowerShell</div>
+        <div class="code-block"><code>Copy-Item ".env.example" ".env"</code></div>
+        <p class="step-description">Generate two secure random values:</p>
+        <div class="code-block"><code>[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))</code></div>
+        <p class="step-description">Open .env in Notepad:</p>
+        <div class="code-block"><code>notepad .env</code></div>
+        <p class="step-description"><strong>Find and update these lines:</strong></p>
+        <div class="code-block"><code>POSTGRES_PASSWORD=<span style="color: #ff6b6b;">paste_first_generated_value_here</span>
+BACKEND_SECRET_KEY=<span style="color: #ff6b6b;">paste_second_generated_value_here</span></code></div>
+        <p class="step-description">Save the file (Ctrl+S) and close Notepad.</p>
+      </div>
+    </div>
+
+    <!-- ========== STEP 4 ========== -->
+    <div class="step">
+      <div><span class="step-number">4</span><h2>Start CRANE</h2></div>
+
+      <div class="tab-nav" role="tablist">
+        <button class="tab-button active" data-tab="start-linux" role="tab">🐧 Linux</button>
+        <button class="tab-button" data-tab="start-macos" role="tab">🍎 macOS</button>
+        <button class="tab-button" data-tab="start-windows" role="tab">🪟 Windows</button>
+      </div>
+
+      <!-- Linux -->
+      <div id="start-linux" class="tab-content active">
+        <p class="step-description">Start all services:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>docker compose up -d</code></div>
+        <p class="step-description">Monitor the startup (first run takes 2-5 minutes):</p>
+        <div class="code-block"><code>docker compose logs -f backend</code></div>
+        <p class="step-description">Wait until you see messages about the app being ready. Then press <kbd>Ctrl+C</kbd> to stop viewing logs.</p>
+      </div>
+
+      <!-- macOS -->
+      <div id="start-macos" class="tab-content">
+        <p class="step-description">Start all services:</p>
+        <div class="terminal-label">Terminal</div>
+        <div class="code-block"><code>docker compose up -d</code></div>
+        <p class="step-description">Monitor the startup (first run takes 2-5 minutes):</p>
+        <div class="code-block"><code>docker compose logs -f backend</code></div>
+        <p class="step-description">Wait until you see messages about the app being ready. Then press <kbd>Control+C</kbd> to stop viewing logs.</p>
+      </div>
+
+      <!-- Windows -->
+      <div id="start-windows" class="tab-content">
+        <p class="step-description">Open PowerShell in the crane directory and start services:</p>
+        <div class="terminal-label">PowerShell</div>
+        <div class="code-block"><code>docker compose up -d</code></div>
+        <p class="step-description">Monitor the startup (first run takes 2-5 minutes):</p>
+        <div class="code-block"><code>docker compose logs -f backend</code></div>
+        <p class="step-description">Wait until you see messages about the app being ready. Then press <kbd>Ctrl+C</kbd> to stop viewing logs.</p>
+      </div>
+    </div>
+
+    <!-- ========== STEP 5 ========== -->
+    <div class="step">
+      <div><span class="step-number">5</span><h2>Access CRANE</h2></div>
+
+      <p class="step-description">Open your web browser and go to:</p>
+      <div class="success-box">
+        <strong>App:</strong> <a href="http://localhost:5173" target="_blank">http://localhost:5173</a><br>
+        <strong>API Docs:</strong> <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000/docs</a>
+      </div>
+
+      <p class="step-description"><strong>Default login credentials:</strong></p>
+      <div class="code-block"><code>Email:    admin@example.com
+Password: admin1234</code></div>
+
+      <div class="info-box">
+        <strong>Note:</strong> You will be prompted to change your password on first login. Do this now for security.
+      </div>
+    </div>
+
+    <!-- ========== VERIFY PREREQUISITES ========== -->
+    <div class="step" id="verify">
+      <div><span class="step-number">✓</span><h2>Verify Prerequisites (Before Starting)</h2></div>
+
+      <div class="tab-nav" role="tablist">
+        <button class="tab-button active" data-tab="verify-linux" role="tab">🐧 Linux</button>
+        <button class="tab-button" data-tab="verify-macos" role="tab">🍎 macOS</button>
+        <button class="tab-button" data-tab="verify-windows" role="tab">🪟 Windows</button>
+      </div>
+
+      <!-- Linux -->
+      <div id="verify-linux" class="tab-content active">
+        <h3>Check Docker is installed and running:</h3>
+        <div class="code-block"><code>docker info</code></div>
+        <p class="step-description">Should print Docker info without errors.</p>
+
+        <h3>Check Docker Compose:</h3>
+        <div class="code-block"><code>docker compose version</code></div>
+        <p class="step-description">Should print v2.x.x</p>
+
+        <h3>Check ports are free:</h3>
+        <div class="code-block"><code>ss -tlnp | grep -E ':(5173|8000|5432)' || echo "All ports free!"</code></div>
+
+        <h3>Check disk space:</h3>
+        <div class="code-block"><code>df -h / | tail -1</code></div>
+        <p class="step-description">You need at least 5 GB free (check the "Avail" column).</p>
+      </div>
+
+      <!-- macOS -->
+      <div id="verify-macos" class="tab-content">
+        <h3>Check Docker is installed and running:</h3>
+        <div class="code-block"><code>docker info</code></div>
+        <p class="step-description">Should print Docker info without errors. If it fails, start Docker.app from Applications.</p>
+
+        <h3>Check Docker Compose:</h3>
+        <div class="code-block"><code>docker compose version</code></div>
+        <p class="step-description">Should print v2.x.x</p>
+
+        <h3>Check ports are free:</h3>
+        <div class="code-block"><code>sudo lsof -i :5173 -i :8000 -i :5432 || echo "All ports free!"</code></div>
+
+        <h3>Check disk space:</h3>
+        <div class="code-block"><code>df -h / | tail -1</code></div>
+        <p class="step-description">You need at least 5 GB free (check the "Avail" column).</p>
+      </div>
+
+      <!-- Windows -->
+      <div id="verify-windows" class="tab-content">
+        <h3>Check Docker is installed and running:</h3>
+        <div class="terminal-label">PowerShell</div>
+        <div class="code-block"><code>docker info</code></div>
+        <p class="step-description">Should print Docker info without errors. If it fails, start Docker Desktop from Start Menu.</p>
+
+        <h3>Check Docker Compose:</h3>
+        <div class="code-block"><code>docker compose version</code></div>
+        <p class="step-description">Should print v2.x.x</p>
+
+        <h3>Check ports are free:</h3>
+        <div class="code-block"><code>netstat -ano | findstr /C:":5173" /C:":8000" /C:":5432"</code></div>
+        <p class="step-description">If nothing appears, ports are free.</p>
+
+        <h3>Check disk space:</h3>
+        <div class="code-block"><code>Get-PSDrive C | Select-Object @{Name="Free(GB)"; Expression={[math]::round($_.Free/1GB,2)}}</code></div>
+        <p class="step-description">You need at least 5 GB free.</p>
+      </div>
+    </div>
+
+    <!-- ========== TROUBLESHOOTING ========== -->
+    <div class="troubleshooting">
+      <h2>🔧 Troubleshooting</h2>
+
+      <div class="issue">
+        <h3>❌ "Cannot connect to Docker daemon"</h3>
+        <p class="issue-description">Error: error during connect: this error may indicate the docker daemon is not running</p>
+
+        <div class="tab-nav" role="tablist">
+          <button class="tab-button active" data-tab="fix-docker-linux" role="tab">🐧 Linux</button>
+          <button class="tab-button" data-tab="fix-docker-macos" role="tab">🍎 macOS</button>
+          <button class="tab-button" data-tab="fix-docker-windows" role="tab">🪟 Windows</button>
+        </div>
+
+        <div id="fix-docker-linux" class="tab-content active">
+          <p>Start Docker:</p>
+          <div class="code-block"><code>sudo systemctl start docker</code></div>
+        </div>
+
+        <div id="fix-docker-macos" class="tab-content">
+          <p>Open Docker.app from the Applications folder and wait for the Docker menu icon to appear in the top-right corner.</p>
+        </div>
+
+        <div id="fix-docker-windows" class="tab-content">
+          <p>Open Docker Desktop from the Start Menu and wait for it to fully load (it may take a minute).</p>
+        </div>
+      </div>
+
+      <div class="issue">
+        <h3>❌ Port already in use</h3>
+        <p class="issue-description">Error: bind: address already in use</p>
+
+        <div class="tab-nav" role="tablist">
+          <button class="tab-button active" data-tab="fix-port-linux" role="tab">🐧 Linux</button>
+          <button class="tab-button" data-tab="fix-port-macos" role="tab">🍎 macOS</button>
+          <button class="tab-button" data-tab="fix-port-windows" role="tab">🪟 Windows</button>
+        </div>
+
+        <div id="fix-port-linux" class="tab-content active">
+          <p><strong>Find what's using port 8000:</strong></p>
+          <div class="code-block"><code>sudo lsof -i :8000</code></div>
+          <p>Stop that service, or change the port in .env:</p>
+          <div class="code-block"><code>nano .env
+# Change: BACKEND_PORT=8001
+# Change: FRONTEND_PORT=5174</code></div>
+        </div>
+
+        <div id="fix-port-macos" class="tab-content">
+          <p><strong>Find what's using port 8000:</strong></p>
+          <div class="code-block"><code>sudo lsof -i :8000</code></div>
+          <p>Stop that service, or change the port in .env:</p>
+          <div class="code-block"><code>nano .env
+# Change: BACKEND_PORT=8001
+# Change: FRONTEND_PORT=5174</code></div>
+        </div>
+
+        <div id="fix-port-windows" class="tab-content">
+          <p><strong>Find what's using port 8000:</strong></p>
+          <div class="code-block"><code>netstat -ano | findstr ":8000"</code></div>
+          <p>Stop that service, or change the port in .env:</p>
+          <div class="code-block"><code>notepad .env
+# Change: BACKEND_PORT=8001
+# Change: FRONTEND_PORT=5174</code></div>
+        </div>
+      </div>
+
+      <div class="issue">
+        <h3>❌ Services won't start / unhealthy status</h3>
+        <p class="issue-description">Error: unhealthy (exit 1) or containers keep restarting</p>
+
+        <div class="tab-nav" role="tablist">
+          <button class="tab-button active" data-tab="fix-health-linux" role="tab">🐧 Linux</button>
+          <button class="tab-button" data-tab="fix-health-macos" role="tab">🍎 macOS</button>
+          <button class="tab-button" data-tab="fix-health-windows" role="tab">🪟 Windows</button>
+        </div>
+
+        <div id="fix-health-linux" class="tab-content active">
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs backend
+docker compose logs postgres</code></div>
+          <p><strong>Restart everything:</strong></p>
+          <div class="code-block"><code>docker compose down
+docker compose up -d</code></div>
+        </div>
+
+        <div id="fix-health-macos" class="tab-content">
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs backend
+docker compose logs postgres</code></div>
+          <p><strong>Restart everything:</strong></p>
+          <div class="code-block"><code>docker compose down
+docker compose up -d</code></div>
+        </div>
+
+        <div id="fix-health-windows" class="tab-content">
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs backend
+docker compose logs postgres</code></div>
+          <p><strong>Restart everything:</strong></p>
+          <div class="code-block"><code>docker compose down
+docker compose up -d</code></div>
+        </div>
+      </div>
+
+      <div class="issue">
+        <h3>❌ Slow startup (>5 minutes)</h3>
+        <p class="issue-description">First run is taking a very long time</p>
+        <p><strong>This is normal!</strong> The vulnerability database is downloading (~200 MB). Check progress:</p>
+        <div class="code-block"><code>docker compose logs backend | grep -i trivy</code></div>
+        <p>Just wait. Subsequent startups will be much faster.</p>
+      </div>
+
+      <div class="issue">
+        <h3>❌ Can't access http://localhost:5173</h3>
+        <p class="issue-description">Browser shows connection error or timeout</p>
+
+        <div class="tab-nav" role="tablist">
+          <button class="tab-button active" data-tab="fix-access-linux" role="tab">🐧 Linux</button>
+          <button class="tab-button" data-tab="fix-access-macos" role="tab">🍎 macOS</button>
+          <button class="tab-button" data-tab="fix-access-windows" role="tab">🪟 Windows</button>
+        </div>
+
+        <div id="fix-access-linux" class="tab-content active">
+          <p><strong>Check if containers are running:</strong></p>
+          <div class="code-block"><code>docker compose ps</code></div>
+          <p>You should see frontend, backend, and postgres all showing "running".</p>
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs frontend</code></div>
+        </div>
+
+        <div id="fix-access-macos" class="tab-content">
+          <p><strong>Check if containers are running:</strong></p>
+          <div class="code-block"><code>docker compose ps</code></div>
+          <p>You should see frontend, backend, and postgres all showing "running".</p>
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs frontend</code></div>
+        </div>
+
+        <div id="fix-access-windows" class="tab-content">
+          <p><strong>Check if containers are running:</strong></p>
+          <div class="code-block"><code>docker compose ps</code></div>
+          <p>You should see frontend, backend, and postgres all showing "running".</p>
+          <p><strong>Check the logs:</strong></p>
+          <div class="code-block"><code>docker compose logs frontend</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== NEXT STEPS ========== -->
+    <div class="next-steps">
+      <h3>✅ You're all set! What's next?</h3>
+      <ul>
+        <li>Log in with admin@example.com / admin1234</li>
+        <li>Change your password (you'll be prompted)</li>
+        <li>Read the <a href="https://cra-norm-engine.github.io/crane/" target="_blank">full documentation</a></li>
+        <li>Get help: <a href="https://github.com/cra-norm-engine/crane/issues" target="_blank">GitHub Issues</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    // Theme Toggle
+    function initTheme() {
+      const theme = localStorage.getItem('crane-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeButton(theme);
+    }
+
+    function updateThemeButton(theme) {
+      const btn = document.getElementById('themeToggle');
+      btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('crane-theme', next);
+      updateThemeButton(next);
+    });
+
+    // Tab Navigation
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.getAttribute('data-tab');
+        const parent = button.closest('.step') || button.closest('.issue');
+
+        // Hide all tabs in this parent
+        parent.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Remove active from all buttons in this parent
+        parent.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        // Show selected tab and mark button as active
+        const tabToShow = parent.querySelector(`#${tabName}`);
+        if (tabToShow) {
+          tabToShow.classList.add('active');
+          button.classList.add('active');
+        }
+      });
+    });
+
+    // Initialize
+    initTheme();
+  </script>
+</body>
+</html>

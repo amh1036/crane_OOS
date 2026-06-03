@@ -73,7 +73,7 @@ CRANE is **beta software** currently used in real compliance engagements. **Core
 - Substantial change assessment, automated integrations, advanced reporting
 
 **Before deploying to production:**
-- Review the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/docs/installation.html) thoroughly
+- Review the [Installation Guide](INSTALLATION.md) thoroughly
 - Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
 - Set strong database and secret key values (see [.env.example](.env.example))
 - Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
@@ -144,89 +144,58 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Documentation
 
-**Complete guides and operational reference:**
+**Getting started quickly:**
 
-- 📖 [Installation & Deployment](https://cra-norm-engine.github.io/crane/installation.html) — System requirements, quick start, production setup, TLS, upgrades
+- 🚀 [Interactive Tabbed Installation Guide](docs/installation-tabbed.html) — **Recommended!** Step-by-step with tabs for each OS
+- 📄 [Markdown Installation Guide](INSTALLATION.md) — Alternative markdown format for quick reference
+- 📖 [Full Documentation Site](https://cra-norm-engine.github.io/crane/) — Complete reference guide
+
+**Additional resources:**
+
 - 🗄️ [Database Implementation](https://cra-norm-engine.github.io/crane/database.html) — Backups, scaling, performance tuning, migrations
 - 📤 [File Upload & Management](https://cra-norm-engine.github.io/crane/file-upload.html) — SBOM processing, evidence attachments, storage limits
 - ⚙️ [Configuration & Deployment](https://cra-norm-engine.github.io/crane/configuration.html) — Environment variables, Docker services, LDAP setup, hardening
-- 🚀 [Quick Start](https://cra-norm-engine.github.io/crane/quickstart.html) — Get running in 5 minutes with one-liners
-- 📚 [Full Documentation Site](https://cra-norm-engine.github.io/crane/)
 
 ---
 
 ## Installation
 
-### Prerequisites
+### 📖 Interactive Installation Guide
 
-- [Docker Desktop](https://docs.docker.com/get-docker/) or Docker Engine + Docker Compose
-  - **Windows:** Docker set to **Linux containers** (right-click Docker tray icon to switch)
-- **Git** (optional, for development)
+**👉 [Read the Tabbed Installation Guide →](docs/installation-tabbed.html)** ← Best for step-by-step visual setup with tabs for each OS
 
-### Quick Start (Recommended)
+Each step has tabs for **Linux**, **macOS**, and **Windows**, making it super clear what to do on your platform.
 
-Clone the repository and configure:
+Prefer markdown? **[Read the Markdown Guide →](INSTALLATION.md)**
+
+### Fastest Setup (One-Liner)
+
+**Linux / macOS:**
+```bash
+cd ~/Desktop && curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+cd $HOME\Desktop; irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
+```
+
+The automated scripts handle Docker setup, secret generation, and service startup. First run takes 2-5 minutes.
+
+### Manual Setup (Advanced)
 
 ```bash
 git clone https://github.com/cra-norm-engine/crane.git
 cd crane
-
-# Copy the environment template
 cp .env.example .env
 
-# Edit .env and set these required values:
-# - POSTGRES_PASSWORD (min 32 random characters)
-# - BACKEND_SECRET_KEY (min 32 random characters)
-# Generate strong values: openssl rand -hex 32
-nano .env
+# Generate secure values:
+openssl rand -hex 32  # for POSTGRES_PASSWORD
+openssl rand -hex 32  # for BACKEND_SECRET_KEY
+# Edit .env with those values
 
-# Start all services
 docker compose up -d
 ```
-
-The first run takes 3–5 minutes while Docker builds the backend image and downloads the vulnerability database.
-
-**For comprehensive installation guidance** (system requirements, pre-flight checks, troubleshooting, upgrades, air-gapped deployment, reverse proxy setup), see the [Installation & Deployment Guide](https://cra-norm-engine.github.io/crane/installation.html).
-
-### Automated Installation (Optional)
-
-For convenience, we provide shell scripts that automate the clone-and-configure steps:
-
-<details>
-<summary>Linux / macOS</summary>
-
-```bash
-cd ~/Desktop
-curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
-```
-
-**Note:** Always review shell scripts before piping to bash. You can download and inspect the script first:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh -o install.sh
-cat install.sh  # Review the script
-bash install.sh
-```
-
-</details>
-
-<details>
-<summary>Windows (PowerShell)</summary>
-
-```powershell
-cd $HOME\Desktop
-irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
-```
-
-Or download and review first:
-
-```powershell
-irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 -OutFile install.ps1
-Get-Content install.ps1  # Review the script
-.\install.ps1
-```
-
-</details>
 
 ### Production Deployment
 
