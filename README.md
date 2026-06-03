@@ -9,7 +9,21 @@
 
 ## What is CRANE?
 
-**CRANE** is a self-hosted compliance management platform for manufacturers meeting the **EU Cyber Resilience Act (CRA)**. 
+**CRANE** is a self-hosted open-source compliance management platform for meeting the **EU Cyber Resilience Act (CRA)**. CRANE can be deployed on-prem or via third-party clouds. Play with an online instance [here](https://cra-compliance-tool-1.onrender.com/). To get a username and password, please contact with this email address [cra.norm.engine@gmail.com]
+
+![CRANE Dashboard](.github/assets/Main_dashboard.png)
+
+What make CRANE diffferent:
+
+- Free of charge and open source
+- Security and privacy by keeping data inside organizations
+- Strong access control and audit for collaborative environment
+- Covering complex scenarios in product development and operation
+- Focuse on compliance and staying compliant
+
+Comprehensive overview of products with required CRA properties and justifications.
+
+![Product Inventory](.github/assets/productInventory.png)
 
 In one integrated tool, you can:
 - **Track products & releases** with version history and lifecycle management
@@ -18,11 +32,35 @@ In one integrated tool, you can:
 - **Enforce release gates** with structured readiness checklists requiring evidence (pentests, assessments, SBOMs)
 - **Maintain audit trails** of every compliance action for regulators and notified bodies
 - **Organize evidence** in one place for conformity assessments and CE marking
+- **On-prem** all data stays in your own PostgreSQL instance
+- **Full control** no telemetry, no callbacks, no external dependencies at runtime
 
 All data stays on your infrastructure. No external API calls, no vendor lock-in, fully auditable.
 
+
+
 ---
 
+## Real-world scenarios
+See [Scenarios](https://cra-norm-engine.github.io/crane/scenarios.html) where CRANE can be used. 
+- 🏭 Industrial Manufacturer
+- 💡 Small IoT Startup
+- 🧑‍💼 CRA Compliance Consultant
+- 🎓 Training & Research
+  
+
+---
+## Who is this for?
+
+| Audience | How CRANE helps |
+|---|---|
+| **Small & medium manufacturers** | Free alternative to expensive GRC platforms — self-host with Docker in minutes |
+| **Software manufacturers** | Track products, releases, SBOMs, and vulnerabilities in one place from day one of CRA |
+| **Consultants** | Deploy a dedicated instance per client engagement; portable data export at project close |
+| **Education & research** | Free, open source, fully documented — ideal for CRA training and academic research |
+| **Critical infrastructure operators** | Self-hosted with no external data sharing; LDAP/AD integration for enterprise environments |
+
+---
 ## Key Features
 
 | Feature | What it does |
@@ -40,127 +78,6 @@ All data stays on your infrastructure. No external API calls, no vendor lock-in,
 
 ---
 
-## Who is this for?
-
-| Audience | How CRANE helps |
-|---|---|
-| **Small & medium manufacturers** | Affordable alternative to expensive GRC platforms — self-host with Docker in minutes |
-| **Software manufacturers** | Track products, releases, SBOMs, and vulnerabilities in one place from day one of CRA |
-| **Consultants** | Deploy a dedicated instance per client engagement; portable data export at project close |
-| **Education & research** | Free, open source, fully documented — ideal for CRA training and academic research |
-| **Critical infrastructure operators** | Self-hosted with no external data sharing; LDAP/AD integration for enterprise environments |
-
----
-
-## Screenshots
-
-Control CRA compliance via an up-to-date dashboard with the most important information.
-
-![CRANE Dashboard](.github/assets/Main_dashboard.png)
-
-Comprehensive overview of products with required CRA properties and justifications.
-
-![Product Inventory](.github/assets/productInventory.png)
-
----
-
-## ⚠️ Maturity & Production Readiness
-
-CRANE is **beta software** currently used in real compliance engagements. **Core modules are stable and production-ready:**
-- Product registry, SBOM analysis, vulnerability tracking, audit logs, release gates
-
-**Some advanced features are still evolving:**
-- Substantial change assessment, automated integrations, advanced reporting
-
-**Before deploying to production:**
-- Review the [Installation Guide](INSTALLATION.md) thoroughly
-- Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
-- Set strong database and secret key values (see [.env.example](.env.example))
-- Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
-- Regularly apply security updates to OS and dependencies
-- Have a backup and recovery procedure in place
-
-**Not recommended for:** Fully unattended production use without a designated operator. Plan for at least one person to monitor logs and handle database migrations during upgrades.
-
----
-
-## Real-world scenarios
-
-### 🏭 Industrial IoT Manufacturer
-
-A manufacturer of connected sensors deployed in factories across the EU needs to demonstrate CRA compliance before placing products on the market.
-
-**With CRANE:**
-- Registers each sensor model as a product with hardware and firmware versions
-- Uploads CycloneDX SBOMs per firmware release — CRANE scores quality and validates CRA requirements
-- Runs vulnerability scans via Trivy and OSV; EPSS scores prioritise which CVEs to fix first
-- Configures a release gate requiring a passed risk assessment, pentest report, and SBOM before any firmware ships
-- Defines a support period per product line with automated end-of-support alerts to customers
-- Exports a complete audit package when the Notified Body requests evidence
-
----
-
-### 💡 Small IoT Startup
-
-A 10-person startup ships a smart energy monitor for residential use. They have no dedicated compliance team and CRA is their first regulatory challenge.
-
-**With CRANE:**
-- Sets up the product registry in under an hour using Docker Compose — no infrastructure expertise needed
-- Uploads their first SBOM and immediately sees which open source components carry known CVEs
-- Uses the CRA Annex I matrix to understand which obligations apply and track progress against each one
-- Classifies their cloud backend using the Article 3(2) wizard — determines it is in scope and documents the rationale
-- Publishes a CVD policy so security researchers know how to report vulnerabilities responsibly
-- When a critical CVE hits a dependency, the team logs the vulnerability report, patches it, issues a security update, and has a full audit trail — all in one place
-- Downloads technical documentation needed for internal conformity assessment and CE marking
-
----
-
-### 🧑‍💼 CRA Compliance Consultant
-
-A consultant runs CRA programmes for five SME clients simultaneously. Each client needs their own compliant product registry and evidence trail.
-
-**With CRANE:**
-- Deploys one self-hosted CRANE instance per client — fully isolated data, no cross-contamination
-- Uses role-based access control to give each client's team read access while retaining admin control
-- Assesses remote processing elements (cloud backends, update servers) against CRA Article 3(2) using the built-in DIGITALEUROPE I1/I3/I5/I6 classification wizard
-- Exports the complete dataset at project close — client takes ownership with no vendor lock-in
-- Uses test-data fixtures to demonstrate the tool during CRA awareness workshops
-- All instances are AGPL-licensed — no per-seat or per-client licensing costs
-
----
-
-### 🎓 Training & Research
-
-A training provider running a cybersecurity engineering course uses CRANE to teach students how CRA compliance works in practice — not just in theory.
-
-**With CRANE:**
-- Spins up a shared instance for the class in minutes — students get individual accounts with scoped roles
-- Each student team registers a fictional product and works through the full compliance lifecycle: SBOM, risk assessment, vulnerability handling, release gate
-- Instructors use the audit log to review every action taken by each team — traceable, timestamped, tamper-evident
-- Researchers studying EU product regulation use CRANE as a live reference implementation of CRA Article 3, Annex I, and Annex II obligations
-- Fully open source and free — no licensing barriers for training use
-
----
-
-## Documentation
-
-**Getting started:**
-
-- 📖 [Installation Guide](https://cra-norm-engine.github.io/crane/installation.html) — Install CRANE in 5 minutes
-- 🚀 [Quick Start](https://cra-norm-engine.github.io/crane/quickstart.html) — One-liner installer
-
-**Other resources:**
-
-- 🌐 [Full Documentation Site](https://cra-norm-engine.github.io/crane/) — Complete API docs and advanced topics
-
-**Additional resources:**
-
-- 🗄️ [Database Implementation](https://cra-norm-engine.github.io/crane/database.html) — Backups, scaling, performance tuning, migrations
-- 📤 [File Upload & Management](https://cra-norm-engine.github.io/crane/file-upload.html) — SBOM processing, evidence attachments, storage limits
-- ⚙️ [Configuration & Deployment](https://cra-norm-engine.github.io/crane/configuration.html) — Environment variables, Docker services, LDAP setup, hardening
-
----
-
 ## Installation
 
 **One-liner (fastest):**
@@ -174,60 +91,6 @@ irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | i
 ```
 
 **Or follow the detailed guide:** [Installation Guide](https://cra-norm-engine.github.io/crane/installation.html)
-
-### Fastest Setup (One-Liner)
-
-**Linux / macOS:**
-```bash
-cd ~/Desktop && curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
-```
-
-**Windows (PowerShell):**
-```powershell
-cd $HOME\Desktop; irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
-```
-
-The automated scripts handle Docker setup, secret generation, and service startup. First run takes 2-5 minutes.
-
-### Manual Setup (Advanced)
-
-```bash
-git clone https://github.com/cra-norm-engine/crane.git
-cd crane
-cp .env.example .env
-
-# Generate secure values:
-openssl rand -hex 32  # for POSTGRES_PASSWORD
-openssl rand -hex 32  # for BACKEND_SECRET_KEY
-# Edit .env with those values
-
-docker compose up -d
-```
-
-### Production Deployment
-
-For production environments, use the production compose configuration with strict security settings:
-
-```bash
-docker compose -f docker-compose.prod.yml up -d
-```
-
-**Required before production:**
-
-1. Edit `.env` and set strong, random values for `POSTGRES_PASSWORD` and `BACKEND_SECRET_KEY`
-2. Update `BACKEND_CORS_ORIGINS` to your domain (e.g., `https://compliance.example.com`)
-3. Run behind a reverse proxy with TLS ([nginx](https://nginx.org/), [Caddy](https://caddyserver.com/), etc.)
-4. Restrict database port to localhost-only (already done in `docker-compose.prod.yml`)
-5. See the [Installation & Deployment Guide](docs/installation.html) for system requirements, pre-flight checks, and TLS setup examples
-
-**Key differences from development:**
-
-- No source code volume mounts
-- Pre-built Docker images from GitHub Container Registry
-- Resource limits enforced
-- Database port only accessible from localhost
-- Debug mode disabled
-- Structured logging
 
 ### Access the app
 
@@ -246,6 +109,10 @@ docker compose -f docker-compose.prod.yml up -d
 
 You will be prompted to set a new password on first login.
 
+### Production Deployment
+
+For production environments, use the production compose [Configuration](https://cra-norm-engine.github.io/crane/configuration.html) with strict security settings.
+
 ---
 
 ## Stack
@@ -262,25 +129,25 @@ You will be prompted to set a new password on first login.
 <tr>
 <td width="33%" valign="top">
 
-### 🚀 Near Term
+### 🚀 Near Term (Q3 2026)
 &nbsp;
 - [ ] Full compliance with CRA reporting obligations before 11 September 2026
-- [ ] Email notifications (EOS alerts, gate approvals)
+- [ ] Gates for fulfilling "without known exploitable vulnerability" requirements
 - [ ] GitHub / GitLab integration
 
 </td>
 <td width="33%" valign="top">
 
-### 📈 Medium Term
+### 📈 Medium Term (Q1 2027)
 &nbsp;
 - [ ] Integration of CENELEC vertical and horizontal standards
 - [ ] Jira / GitHub Issues integration
-- [ ] Multi-tenant support
+- [ ] Integration with Security Development Lifecycle (SDL) processes (agile, V-Model, Waterfall)
 
 </td>
 <td width="33%" valign="top">
 
-### 🎯 Long Term
+### 🎯 Long Term (Q3 2027 upward)
 &nbsp;
 - [ ] Formalised conformity reasoning
 - [ ] AI integration
@@ -291,13 +158,23 @@ You will be prompted to set a new password on first login.
 </table>
 
 ---
+## ⚠️ Maturity & Production Readiness
 
-## Self-hosted by design
+CRANE is **beta software** currently used in real compliance engagements. **Core modules are stable and production-ready:**
+- Product registry, SBOM analysis, vulnerability tracking, audit logs, release gates
 
-- All data stays in your own PostgreSQL instance
-- No telemetry, no callbacks, no external dependencies at runtime
-- Full data export at any time
-- AGPL-3.0 — audit the code, fork it, extend it
+**Some advanced features are still evolving:**
+- Substantial change assessment, automated integrations, advanced reporting
+
+**Before deploying to production:**
+- Review the [Installation Guide](INSTALLATION.md) thoroughly
+- Use [`docker-compose.prod.yml`](docker-compose.prod.yml) — **never use `docker-compose.yml` in production**
+- Set strong database and secret key values (see [.env.example](.env.example))
+- Run behind a reverse proxy with TLS (nginx, Caddy, etc.)
+- Regularly apply security updates to OS and dependencies
+- Have a backup and recovery procedure in place
+
+**Not recommended for:** Fully unattended production use without a designated operator. Plan for at least one person to monitor logs and handle database migrations during upgrades.
 
 ---
 
