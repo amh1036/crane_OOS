@@ -144,11 +144,10 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Documentation
 
-**Installation guides:**
+**Getting started:**
 
-- 📋 [Installation Guide (Interactive Tabs)](docs/installation-tabbed.html) — Step-by-step with OS-specific tabs
-- 📚 [Comprehensive Guide](docs/installation.html) — Full reference for production deployment
-- 📄 [Markdown Format](INSTALLATION.md) — Read in terminal or GitHub
+- 📖 [Installation Guide](https://cra-norm-engine.github.io/crane/installation.html) — Install CRANE in 5 minutes
+- 🚀 [Quick Start](https://cra-norm-engine.github.io/crane/quickstart.html) — One-liner installer
 
 **Other resources:**
 
@@ -164,9 +163,7 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Installation
 
-### Quick Start
-
-**One-liner installation (fully automated):**
+**One-liner (fastest):**
 
 ```bash
 # Linux / macOS
@@ -176,17 +173,7 @@ curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.
 irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
 ```
 
-Takes ~2 minutes. First run takes 3-5 minutes to build and download the vulnerability database.
-
-### Detailed Installation
-
-For step-by-step guidance with tabs for your OS, see:
-- **👉 [Installation Guide (Interactive Tabs)](docs/installation-tabbed.html)** — Each step shows Linux, macOS, and Windows instructions
-
-For production deployment, TLS setup, upgrades, and advanced topics, see:
-- **📚 [Comprehensive Guide](docs/installation.html)** — Full reference documentation
-
-**Prefer plain text?** Read [INSTALLATION.md](INSTALLATION.md)
+**Or follow the detailed guide:** [Installation Guide](https://cra-norm-engine.github.io/crane/installation.html)
 
 ### Fastest Setup (One-Liner)
 

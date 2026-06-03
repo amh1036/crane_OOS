@@ -99,6 +99,211 @@
           <div><p>Native multi-tenant support is on the roadmap; until then, separate instances are the recommended isolation model.</p></div>
         </div>
 
+        <h2 id="reverse-proxy">Reverse Proxy & TLS Setup</h2>
+        <p><strong>CRANE binds to localhost only by default.</strong> To expose it to the internet safely, run it behind a reverse proxy with TLS. This section covers two common approaches.</p>
+
+        <h3>Option 1: Caddy (Recommended — Simplest)</h3>
+        <p>Caddy automatically obtains and renews TLS certificates.</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Install Caddy</div>
+            <p>Follow the <a href="https://caddyserver.com/docs/install">Caddy installation guide</a> for your OS.</p>
+          </li>
+          <li>
+            <div class="step-title">Create a Caddyfile</div>
+            <p>Replace <code>compliance.example.com</code> with your domain:</p>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>/etc/caddy/Caddyfile</div>
+              <pre><code>compliance.example.com {
+  @frontend {
+    not path /api/*
+    not path /docs*
+  }
+  handle @frontend {
+    reverse_proxy localhost:5173
+  }
+  handle /api/* {
+    reverse_proxy localhost:8000
+  }
+}</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Run Caddy</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>caddy run</code></pre>
+            </div>
+            <p>Caddy will automatically request a TLS certificate and listen on port 443.</p>
+          </li>
+        </ol>
+
+        <h3>Option 2: Nginx (More Control)</h3>
+        <p>Nginx requires manual TLS setup but gives you more control.</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Install Nginx and Certbot</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal — Ubuntu/Debian</div>
+              <pre><code>sudo apt update
+sudo apt install -y nginx certbot python3-certbot-nginx</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Create Nginx configuration</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span">/etc/nginx/sites-available/crane</div>
+              <pre><code># Redirect HTTP to HTTPS
+server {
+  listen 80;
+  server_name compliance.example.com;
+  return 301 https://$server_name$request_uri;
+}
+
+# HTTPS
+server {
+  listen 443 ssl http2;
+  server_name compliance.example.com;
+
+  location / {
+    proxy_pass http://localhost:5173;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /api/ {
+    proxy_pass http://localhost:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 300s;
+  }
+}</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Enable site and get TLS certificate</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>sudo ln -s /etc/nginx/sites-available/crane /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+sudo certbot --nginx -d compliance.example.com</code></pre>
+            </div>
+          </li>
+        </ol>
+
+        <h2 id="upgrades">Upgrades & Maintenance</h2>
+        <p>Keep CRANE updated to get security fixes and new features.</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Check for breaking changes</div>
+            <p>Review the <a href="https://github.com/cra-norm-engine/crane/blob/main/CHANGELOG.md">CHANGELOG.md</a> for any migration steps.</p>
+          </li>
+          <li>
+            <div class="step-title">Pull latest code</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>cd crane
+git pull origin main
+docker compose up -d --build</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Run database migrations</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose exec backend alembic upgrade head</code></pre>
+            </div>
+            <p>Alembic only applies unapplied migrations, so it's safe to run repeatedly.</p>
+          </li>
+          <li>
+            <div class="step-title">Verify health</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose ps
+curl http://localhost:8000/api/v1/health</code></pre>
+            </div>
+          </li>
+        </ol>
+
+        <h2 id="rollback">Rolling Back</h2>
+        <p>If an upgrade breaks something, you can roll back to a previous version.</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Stop services</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose down</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Checkout previous version</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>git checkout v0.1.0  # or your previous version tag</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Start services</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose up -d</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Optional: rollback database schema</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose exec backend alembic downgrade -1</code></pre>
+            </div>
+            <p>Only needed if the previous version requires an older database schema.</p>
+          </li>
+        </ol>
+
+        <h2 id="offline">Offline / Air-Gapped Installation</h2>
+        <p>For environments without internet access, pre-pull Docker images and transfer them offline.</p>
+        <ol class="steps">
+          <li>
+            <div class="step-title">On a machine with internet</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker pull ghcr.io/cra-norm-engine/crane-backend:latest
+docker pull ghcr.io/cra-norm-engine/crane-frontend:latest
+docker pull postgres:16-alpine
+
+docker save ghcr.io/cra-norm-engine/crane-backend:latest -o crane-backend.tar
+docker save ghcr.io/cra-norm-engine/crane-frontend:latest -o crane-frontend.tar
+docker save postgres:16-alpine -o postgres.tar</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Transfer tar files to offline machine</div>
+            <p>Use USB drive, secure file transfer, or your preferred method.</p>
+          </li>
+          <li>
+            <div class="step-title">On the offline machine</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker load -i crane-backend.tar
+docker load -i crane-frontend.tar
+docker load -i postgres.tar
+
+docker images | grep crane</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-title">Clone CRANE and run</div>
+            <div class="code-block titled">
+              <div class="code-title"><span class="dot"></span>Terminal</div>
+              <pre><code>docker compose up -d</code></pre>
+            </div>
+          </li>
+        </ol>
+
         <div class="card-grid">
           <a class="card" href="api.html"><h4>API Reference →</h4><p>Automate setup and integrate with CI.</p></a>
           <a class="card" href="faq.html"><h4>Troubleshooting →</h4><p>Ports in use, first-run delays and login issues.</p></a>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRANE Docs — Installation & Deployment Guide</title>
-  <meta name="description" content="Complete installation guide for CRANE covering system requirements, development & production setup, upgrades, troubleshooting, and air-gapped deployment.">
+  <title>CRANE Docs — Installation Guide</title>
+  <meta name="description" content="Install CRANE in 5 minutes with step-by-step instructions for Linux, macOS, and Windows.">
   <link rel="stylesheet" href="assets/docs.css">
   <script>(function(){try{var t=localStorage.getItem('crane-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
@@ -13,739 +13,234 @@
     <main class="content">
       <article class="article">
         <p class="eyebrow">Getting Started</p>
-        <h1>Installation & Deployment Guide</h1>
-        <p class="lead">Complete guide to installing CRANE in development or production, configuring TLS, upgrading, and troubleshooting issues during setup.</p>
-
-        <!-- Path routing cards -->
-        <div class="card-grid">
-          <a class="card" href="#dev">
-            <div class="card-icon">⚡</div>
-            <h3>Development Setup</h3>
-            <p>Get CRANE running locally for testing and development.</p>
-          </a>
-          <a class="card" href="#production">
-            <div class="card-icon">🔒</div>
-            <h3>Production Deployment</h3>
-            <p>Deploy securely with proper secrets, reverse proxy, and TLS.</p>
-          </a>
-          <a class="card" href="#upgrade">
-            <div class="card-icon">🔄</div>
-            <h3>Upgrade & Maintenance</h3>
-            <p>Update, roll back, and manage running instances.</p>
-          </a>
-        </div>
-
-        <hr>
-
-        <!-- ========== SETUP PHASE ========== -->
-        <h2 id="requirements">System Requirements</h2>
-        <p>CRANE runs on any OS with Docker support. Below are the official requirements:</p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Component</th>
-                <th>Requirement</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Operating System</strong></td>
-                <td>Linux, macOS 11+, Windows 10/11</td>
-                <td>Any OS with Docker support</td>
-              </tr>
-              <tr>
-                <td><strong>CPU Architecture</strong></td>
-                <td>amd64, arm64</td>
-                <td>Both architectures officially supported</td>
-              </tr>
-              <tr>
-                <td><strong>Docker Engine</strong></td>
-                <td>≥24.0.0</td>
-                <td>Or Docker Desktop 4.18+</td>
-              </tr>
-              <tr>
-                <td><strong>Docker Compose</strong></td>
-                <td>v2 plugin</td>
-                <td>Use <code>docker compose</code> (not <code>docker-compose</code>)</td>
-              </tr>
-              <tr>
-                <td><strong>RAM</strong></td>
-                <td>2 GB minimum free</td>
-                <td>4 GB+ recommended for production</td>
-              </tr>
-              <tr>
-                <td><strong>Disk Space</strong></td>
-                <td>5 GB minimum</td>
-                <td>For images, database, and uploads</td>
-              </tr>
-              <tr>
-                <td><strong>Network Ports</strong></td>
-                <td>5173, 8000, 5432 free</td>
-                <td>Frontend, API, and database</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2 id="preflight">Pre-Flight Checks</h2>
-        <p>Before installing, verify your system is ready:</p>
-        <ol class="steps">
-          <li>
-            <div class="step-title">Docker is running</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker info</code></pre>
-            </div>
-            <p>Should print Docker configuration without errors. On macOS/Windows, start Docker Desktop if you see "Cannot connect to Docker daemon."</p>
-          </li>
-          <li>
-            <div class="step-title">Compose v2 is available</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose version</code></pre>
-            </div>
-            <p>Should print v2.x.x. If you see "no such command," upgrade Docker.</p>
-          </li>
-          <li>
-            <div class="step-title">Ports 5173, 8000, 5432 are available</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code># Linux / macOS:
-ss -tlnp | grep -E ':(5173|8000|5432)'
-
-# Windows (in PowerShell):
-netstat -ano | findstr /C:":5173" /C:":8000" /C:":5432"</code></pre>
-            </div>
-            <p>If ports are in use, either stop the conflicting service or change the port in <code>.env</code>.</p>
-          </li>
-          <li>
-            <div class="step-title">Sufficient disk space</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>df -h /</code></pre>
-            </div>
-            <p>Ensure 5+ GB of free space for Docker images and the database.</p>
-          </li>
-        </ol>
-
-        <hr>
-
-        <!-- ========== DEVELOPMENT SETUP ========== -->
-        <h2 id="dev">Development Setup</h2>
-        <p>Quick setup for local testing and development using <code>docker-compose.yml</code>.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Clone the repository</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>git clone https://github.com/cra-norm-engine/crane.git
-cd crane</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Generate secrets and configure .env</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>cp .env.example .env
-# Generate strong random values:
-openssl rand -hex 32  # for BACKEND_SECRET_KEY
-openssl rand -hex 32  # for POSTGRES_PASSWORD
-
-# Edit .env and paste the values
-nano .env</code></pre>
-            </div>
-            <p>The installer scripts handle this automatically, but for manual setup you must set <code>BACKEND_SECRET_KEY</code> and <code>POSTGRES_PASSWORD</code>.</p>
-          </li>
-          <li>
-            <div class="step-title">Start CRANE</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose up -d</code></pre>
-            </div>
-            <p>First run takes 3–5 minutes while Docker builds the backend image and downloads the vulnerability database.</p>
-          </li>
-          <li>
-            <div class="step-title">Access the app</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Browser</div>
-              <pre><code>Frontend:  http://localhost:5173
-API:       http://localhost:8000/api/v1
-API Docs:  http://localhost:8000/docs</code></pre>
-            </div>
-            <p>Log in with <code>admin@example.com</code> / <code>admin1234</code>. You'll be prompted to set a new password on first login.</p>
-          </li>
-        </ol>
+        <h1>Installation Guide</h1>
+        <p class="lead">Get CRANE running in 5 minutes. Choose your path below.</p>
 
         <div class="callout">
           <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-          <div><p><strong>For production deployments,</strong> use <code>docker-compose.prod.yml</code> instead (see next section). The development compose includes volume mounts and debug mode.</p></div>
+          <div><p><strong>For local development/testing:</strong> Follow this guide. <strong>For production:</strong> See <a href="configuration.html">Configuration & Deployment</a> for hardening, TLS, reverse proxy, backups, and LDAP setup.</p></div>
         </div>
 
-        <hr>
+        <h2>Option 1: Fastest (One-Liner)</h2>
+        <p>Copy and run one command. Everything else is automated.</p>
 
-        <!-- ========== PRODUCTION DEPLOYMENT ========== -->
-        <h2 id="production">Production Deployment</h2>
-        <p>Deploy CRANE securely using <code>docker-compose.prod.yml</code>, which includes hardened settings: no source code mounts, pre-built images, resource limits, and localhost-only database access.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Clone the repository</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>git clone https://github.com/cra-norm-engine/crane.git
-cd crane</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Generate secrets and create .env</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>cp .env.example .env
-# Generate strong random values:
-openssl rand -hex 32</code></pre>
-            </div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>.env (production example)</div>
-              <pre><code>POSTGRES_DB=cra_compliance
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_random_password_here
-BACKEND_ENVIRONMENT=production
-BACKEND_SECRET_KEY=your_random_key_here
-BACKEND_DEBUG=false
-BACKEND_CORS_ORIGINS=https://compliance.example.com
-VITE_API_BASE_URL=https://compliance.example.com/api/v1</code></pre>
-            </div>
-            <p><strong>Important:</strong> Set strong, random values for <code>POSTGRES_PASSWORD</code> and <code>BACKEND_SECRET_KEY</code>. Never use defaults in production.</p>
-          </li>
-          <li>
-            <div class="step-title">Validate configuration</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml config</code></pre>
-            </div>
-            <p>Validates YAML syntax without starting services.</p>
-          </li>
-          <li>
-            <div class="step-title">Start services</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
-            </div>
-            <p>First run takes 3–5 minutes while Docker pulls images and initializes the database.</p>
-          </li>
-          <li>
-            <div class="step-title">Verify services are healthy</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml ps</code></pre>
-            </div>
-            <p>All services should show <code>running</code>.</p>
-          </li>
-          <li>
-            <div class="step-title">Set up reverse proxy (see next section)</div>
-            <p>Services are bound to localhost only. Access them via a reverse proxy with TLS.</p>
-          </li>
-          <li>
-            <div class="step-title">Change default password</div>
-            <p>Log in with <code>admin@example.com</code> / <code>admin1234</code>. You will be forced to set a new password on first login.</p>
-          </li>
-        </ol>
-
-        <hr>
-
-        <!-- ========== REVERSE PROXY ========== -->
-        <h2 id="reverse-proxy">Reverse Proxy & TLS Setup</h2>
-
-        <h3>Why You Need a Reverse Proxy</h3>
-        <p><strong>CRANE binds to localhost only.</strong> It's not accessible from the internet by default — which is good for security, but you need a way to expose it safely. A reverse proxy sits in front of CRANE and:</p>
-        <ul>
-          <li>Forwards internet traffic to CRANE running on localhost</li>
-          <li>Handles HTTPS/TLS encryption so users have a secure connection</li>
-          <li>Protects CRANE from direct internet exposure</li>
-        </ul>
-
-        <div class="callout">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-          <div><p><strong>You need a domain name</strong> (e.g., <code>compliance.example.com</code>) before setting up a reverse proxy. Both Nginx and Caddy will automatically obtain TLS certificates from Let's Encrypt, but they need a valid domain to do so.</p></div>
-        </div>
-
-        <h3>Option 1: Caddy (Recommended — Simplest)</h3>
-        <p>Caddy is the easiest option — it automatically handles TLS certificates for you.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Install Caddy</div>
-            <p>Follow the <a href="https://caddyserver.com/docs/install">Caddy installation guide</a> for your OS.</p>
-          </li>
-          <li>
-            <div class="step-title">Create a Caddyfile</div>
-            <p>Replace <code>compliance.example.com</code> with your actual domain.</p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>/etc/caddy/Caddyfile (or ~/Caddyfile)</div>
-              <pre><code>compliance.example.com {
-  # Serve the Vue app (frontend)
-  @frontend {
-    not path /api/*
-    not path /docs*
-  }
-  handle @frontend {
-    reverse_proxy localhost:5173
-  }
-
-  # Route /api/* to the backend API
-  handle /api/* {
-    reverse_proxy localhost:8000
-  }
-}</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Run Caddy</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>caddy run</code></pre>
-            </div>
-            <p><strong>That's it!</strong> Caddy will:</p>
-            <ul>
-              <li>Automatically request a TLS certificate from Let's Encrypt</li>
-              <li>Auto-renew the certificate before it expires</li>
-              <li>Start listening on port 443 (HTTPS)</li>
-            </ul>
-          </li>
-          <li>
-            <div class="step-title">Access CRANE</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Browser</div>
-              <pre><code>https://compliance.example.com</code></pre>
-            </div>
-            <p>Your browser should show a valid HTTPS connection (green lock icon).</p>
-          </li>
-        </ol>
-
-        <h3>Option 2: Nginx (More Control)</h3>
-        <p>Nginx requires more manual setup but gives you more control. Use this if you prefer Nginx or need specific configuration.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Install Nginx and Certbot</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal — Ubuntu/Debian</div>
-              <pre><code>sudo apt update
-sudo apt install nginx certbot python3-certbot-nginx</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Create Nginx config</div>
-            <p>Replace <code>compliance.example.com</code> with your actual domain.</p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>/etc/nginx/sites-available/crane</div>
-              <pre><code># Redirect HTTP → HTTPS
-server {
-  listen 80;
-  server_name compliance.example.com;
-  return 301 https://$server_name$request_uri;
-}
-
-# HTTPS server block (TLS config will be added by Certbot)
-server {
-  listen 443 ssl http2;
-  server_name compliance.example.com;
-
-  # Forward the Vue app to the frontend container
-  location / {
-    proxy_pass http://localhost:5173;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
-
-  # Forward /api/* to the backend API
-  location /api/ {
-    proxy_pass http://localhost:8000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_read_timeout 300s;
-  }
-}</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Enable the Nginx site</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>sudo ln -s /etc/nginx/sites-available/crane /etc/nginx/sites-enabled/
-sudo nginx -t  # Test the config syntax
-sudo systemctl restart nginx</code></pre>
-            </div>
-            <p>If <code>nginx -t</code> shows errors, fix them before restarting.</p>
-          </li>
-          <li>
-            <div class="step-title">Get TLS certificates with Certbot</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>sudo certbot --nginx -d compliance.example.com</code></pre>
-            </div>
-            <p>Certbot will:</p>
-            <ul>
-              <li>Request a certificate from Let's Encrypt for your domain</li>
-              <li>Automatically update your Nginx config with the certificate path</li>
-              <li>Set up auto-renewal</li>
-            </ul>
-          </li>
-          <li>
-            <div class="step-title">Verify Certbot auto-renewal</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>sudo systemctl enable certbot.timer
-sudo systemctl start certbot.timer</code></pre>
-            </div>
-            <p>This ensures your certificate auto-renews before expiration.</p>
-          </li>
-          <li>
-            <div class="step-title">Access CRANE</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Browser</div>
-              <pre><code>https://compliance.example.com</code></pre>
-            </div>
-            <p>Your browser should show a valid HTTPS connection.</p>
-          </li>
-        </ol>
-
-        <h3>Verify It's Working</h3>
+        <h3>Linux / macOS</h3>
         <div class="code-block titled">
           <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code># Check if CRANE is accessible
-curl https://compliance.example.com
-
-# Check TLS certificate details
-echo | openssl s_client -servername compliance.example.com -connect compliance.example.com:443 2>/dev/null | grep -A 5 "Issuer"</code></pre>
+          <pre><code>curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash</code></pre>
         </div>
 
-        <h3>Troubleshooting Reverse Proxy</h3>
-        <p><strong>502 Bad Gateway error?</strong> CRANE might not be running or listening on the expected port. Check:</p>
+        <h3>Windows (PowerShell)</h3>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code">docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs backend</code></pre>
+          <div class="code-title"><span class="dot"></span>PowerShell</div>
+          <pre><code>irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex</code></pre>
         </div>
 
-        <p><strong>Certbot certificate renewal failing?</strong> Test it manually:</p>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>sudo certbot renew --dry-run</code></pre>
-        </div>
+        <p><strong>Done!</strong> Wait 2-5 minutes. Then open <code>http://localhost:5173</code></p>
 
         <hr>
 
-        <!-- ========== ORIGINAL NGINX SECTION (KEPT FOR REFERENCE) ========== -->
-        <h2 id="reverse-proxy-advanced">Advanced: Custom Nginx Configuration (Reference)</h2>
-        <p>If you need more control over Nginx beyond the basic setup above, here's the complete configuration template.</p>
+        <h2>Option 2: Manual Setup (5 Steps)</h2>
+        <p>If you prefer to understand each step, follow this manual process.</p>
 
-        <p>For advanced use cases (custom SSL ciphers, rate limiting, multiple backends, etc.), refer to the <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">Nginx proxy documentation</a>.</p>
+        <h3>Step 1: Install Docker</h3>
 
-        <hr>
-
-        <!-- ========== MAINTENANCE PHASE ========== -->
-        <h2 id="upgrade">Upgrading CRANE</h2>
-        <p>Keep CRANE updated to get security fixes and new features. Always check the CHANGELOG for breaking changes.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Review breaking changes</div>
-            <p>Check <a href="https://github.com/cra-norm-engine/crane/blob/main/CHANGELOG.md">CHANGELOG.md</a> for any migration steps required.</p>
-          </li>
-          <li>
-            <div class="step-title">Navigate to your CRANE directory</div>
-            <p>You must run all upgrade commands <strong>inside the CRANE folder</strong> where <code>docker-compose.yml</code> and <code>docker-compose.prod.yml</code> live:</p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>cd ~/Desktop/crane  # or wherever you installed CRANE
-ls -la  # verify you see docker-compose.yml, .git/, backend/, etc.</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Pull latest code or images</div>
-            <p><strong>For development (inside CRANE folder):</strong></p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>git pull origin main
-docker compose up -d --build</code></pre>
-            </div>
-            <p><strong>For production (inside CRANE folder):</strong></p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d</code></pre>
-            </div>
-            <p><strong>What happens:</strong></p>
-            <ul>
-              <li><strong>Development:</strong> `git pull` downloads code; `--build` recompiles Docker image from source</li>
-              <li><strong>Production:</strong> `pull` downloads pre-built images from GitHub Container Registry</li>
-            </ul>
-          </li>
-          <li>
-            <div class="step-title">Run database migrations</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml exec backend alembic upgrade head</code></pre>
-            </div>
-            <p>Always safe — Alembic only applies unapplied migrations.</p>
-          </li>
-          <li>
-            <div class="step-title">Verify services are healthy</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml ps
-curl http://localhost:8000/api/v1/health</code></pre>
-            </div>
-          </li>
-        </ol>
-
-        <h2 id="rollback">Rolling Back</h2>
-        <p>If an upgrade breaks something, roll back to the previous version.</p>
-
-        <ol class="steps">
-          <li>
-            <div class="step-title">Stop services</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml down</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Revert to the previous version</div>
-            <p><strong>Option A: Using git tags</strong></p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>git checkout v0.1.0  # or your previous version tag</code></pre>
-            </div>
-            <p><strong>Option B: Using image tags</strong></p>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Edit docker-compose.prod.yml</div>
-              <pre><code">crane-backend:v0.1.0  # instead of latest
-crane-frontend:v0.1.0</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Start services</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Optional: rollback database schema</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml exec backend alembic downgrade -1</code></pre>
-            </div>
-            <p>Only needed if the previous version requires an older database schema.</p>
-          </li>
-        </ol>
-
-        <h2 id="uninstall">Uninstalling CRANE</h2>
-        <p>To completely remove CRANE:</p>
-
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><span class="callout-title">Data loss warning</span><p><code>docker compose down -v</code> deletes the database volume and all data permanently. Back up first if you need the data.</p></div>
-        </div>
-
+        <p><strong>Linux (Ubuntu/Debian):</strong></p>
         <div class="code-block titled">
           <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code># Back up the database (optional but recommended)
-docker compose -f docker-compose.prod.yml exec postgres pg_dump -U postgres cra_compliance > crane-backup.sql
-
-# Stop and remove containers + volumes
-docker compose -f docker-compose.prod.yml down -v
-
-# Clean up the directory
-cd ..
-rm -rf crane/</code></pre>
+          <pre><code>sudo apt update
+sudo apt install -y docker.io docker-compose-plugin
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+newgrp docker</code></pre>
         </div>
 
-        <hr>
+        <p><strong>macOS:</strong></p>
+        <p>Download and install <a href="https://docs.docker.com/desktop/install/mac-install/">Docker Desktop for Mac</a>. Start it from Applications.</p>
 
-        <!-- ========== REFERENCE SECTION ========== -->
-        <h2 id="offline">Offline / Air-Gapped Installation</h2>
-        <p>For environments without internet access, pre-pull Docker images and transfer them offline.</p>
+        <p><strong>Windows:</strong></p>
+        <p>Download and install <a href="https://docs.docker.com/desktop/install/windows-install/">Docker Desktop for Windows</a>. Choose WSL 2 when prompted. Restart your computer.</p>
 
-        <ol class="steps">
-          <li>
-            <div class="step-title">On a machine with internet access</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker pull ghcr.io/cra-norm-engine/crane-backend:latest
-docker pull ghcr.io/cra-norm-engine/crane-frontend:latest
-docker pull postgres:16-alpine
-
-docker save ghcr.io/cra-norm-engine/crane-backend:latest -o crane-backend.tar
-docker save ghcr.io/cra-norm-engine/crane-frontend:latest -o crane-frontend.tar
-docker save postgres:16-alpine -o postgres.tar</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Transfer tar files to the target machine</div>
-            <p>Use USB drive, secure transfer protocol, etc.</p>
-          </li>
-          <li>
-            <div class="step-title">On the target machine (offline)</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker load -i crane-backend.tar
-docker load -i crane-frontend.tar
-docker load -i postgres.tar
-
-docker images | grep crane</code></pre>
-            </div>
-          </li>
-          <li>
-            <div class="step-title">Clone or copy CRANE repository and run</div>
-            <div class="code-block titled">
-              <div class="code-title"><span class="dot"></span>Terminal</div>
-              <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
-            </div>
-          </li>
-        </ol>
-
-        <h2 id="scripts">Understanding the Install Scripts</h2>
-        <p>CRANE provides convenience installer scripts (<code>install.sh</code> and <code>install.ps1</code>) that automate the clone-and-setup process. This section explains what they do, so you can audit and trust them.</p>
-
-        <h3>What the Scripts Do</h3>
+        <p><strong>Verify Docker is running:</strong></p>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>install.sh / install.ps1</div>
-          <pre><code>1. Download the repository (as a zip from main branch)
-2. Generate secure secrets (BACKEND_SECRET_KEY, POSTGRES_PASSWORD)
-3. Create .env with the generated secrets
-4. Run: docker compose up -d
-5. Poll the health endpoint for up to 120 seconds
-6. Print the default credentials and access URLs</code></pre>
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>docker run hello-world</code></pre>
         </div>
 
-        <h3>Safe Script Execution</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><p><strong>Always review scripts before executing.</strong> Never blindly pipe remote scripts into bash or PowerShell.</p></div>
-        </div>
+        <h3>Step 2: Clone CRANE</h3>
 
         <p><strong>Linux / macOS:</strong></p>
         <div class="code-block titled">
           <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh -o install.sh
-cat install.sh  # Review the script
-bash install.sh  # Run only after reviewing</code></pre>
+          <pre><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></pre>
         </div>
 
-        <p><strong>Windows (PowerShell):</strong></p>
+        <p><strong>Windows:</strong></p>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 -OutFile install.ps1
-Get-Content install.ps1  # Review the script
-.\install.ps1  # Run only after reviewing</code></pre>
+          <div class="code-title"><span class="dot"></span>PowerShell</div>
+          <pre><code>git clone https://github.com/cra-norm-engine/crane.git
+cd crane</code></pre>
         </div>
 
-        <h3>Script Permissions</h3>
-        <p>The scripts require:</p>
+        <p>Or download as ZIP:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Browser or PowerShell</div>
+          <pre><code>https://github.com/cra-norm-engine/crane/archive/refs/heads/main.zip</code></pre>
+        </div>
+
+        <h3>Step 3: Create .env Configuration</h3>
+
+        <p>Copy the example file:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>cp .env.example .env</code></pre>
+        </div>
+
+        <p>Generate two random secure values:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Linux / macOS</div>
+          <pre><code>openssl rand -hex 16  # for POSTGRES_PASSWORD
+openssl rand -hex 32  # for BACKEND_SECRET_KEY</code></pre>
+        </div>
+
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Windows PowerShell</div>
+          <pre><code>[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(16))  # for POSTGRES_PASSWORD
+[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))  # for BACKEND_SECRET_KEY</code></pre>
+        </div>
+
+        <p>Edit <code>.env</code> and update these two lines with your generated values:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>.env</div>
+          <pre><code>POSTGRES_PASSWORD=&lt;paste_16_byte_hex_value&gt;
+BACKEND_SECRET_KEY=&lt;paste_32_byte_hex_value&gt;</code></pre>
+        </div>
+
+        <h3>Step 4: Start CRANE</h3>
+
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>docker compose up -d</code></pre>
+        </div>
+
+        <p>First run takes 2-5 minutes while Docker builds images and downloads the vulnerability database.</p>
+
+        <p>Check progress:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>docker compose logs -f backend</code></pre>
+        </div>
+
+        <p>Press Ctrl+C (Cmd+C on Mac) to stop viewing logs.</p>
+
+        <h3>Step 5: Access CRANE</h3>
+
+        <p>Open your browser and go to:</p>
         <ul>
-          <li>Execute permission on the script itself</li>
-          <li>Docker daemon access (docker group on Linux; Docker Desktop on macOS/Windows)</li>
-          <li>Write permission to the installation directory</li>
-          <li>Network access to GitHub and Docker registries</li>
+          <li><strong>App:</strong> <a href="http://localhost:5173">http://localhost:5173</a></li>
+          <li><strong>API Docs:</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a></li>
         </ul>
+
+        <p><strong>Default login:</strong></p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>Credentials</div>
+          <pre><code>Email:    admin@example.com
+Password: admin1234</code></pre>
+        </div>
+
+        <p><strong>Change your password on first login.</strong></p>
 
         <hr>
 
-        <!-- ========== TROUBLESHOOTING ========== -->
-        <h2 id="troubleshooting">Installation Troubleshooting</h2>
+        <h2>Troubleshooting</h2>
 
-        <h3>Docker daemon is not running</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><code>Error: Cannot connect to Docker daemon</code></div>
-        </div>
-        <p><strong>Solution:</strong> Start Docker. On macOS/Windows, open Docker Desktop. On Linux, run <code>sudo systemctl start docker</code>.</p>
+        <h3>Docker is not running</h3>
+        <p><strong>Problem:</strong> <code>Error: Cannot connect to Docker daemon</code></p>
+        <p><strong>Solution:</strong></p>
+        <ul>
+          <li><strong>Linux:</strong> Run <code>sudo systemctl start docker</code></li>
+          <li><strong>macOS:</strong> Open Docker.app from Applications</li>
+          <li><strong>Windows:</strong> Open Docker Desktop from Start Menu</li>
+        </ul>
 
-        <h3>Port 5173, 8000, or 5432 is already in use</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><code>Error: bind: address already in use</code></div>
-        </div>
-        <p><strong>Solution:</strong> Change the port in <code>.env</code>:</p>
+        <h3>Port already in use</h3>
+        <p><strong>Problem:</strong> <code>Error: bind: address already in use</code></p>
+        <p><strong>Solution:</strong> Change the ports in <code>.env</code>:</p>
         <div class="code-block titled">
           <div class="code-title"><span class="dot"></span>.env</div>
-          <pre><code>BACKEND_PORT=8001  # Use 8001 instead of 8000
-FRONTEND_PORT=5174  # Use 5174 instead of 5173</code></pre>
+          <pre><code>BACKEND_PORT=8001
+FRONTEND_PORT=5174</code></pre>
         </div>
 
-        <h3>Docker image build failed</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><code>Error: failed to build image</code></div>
-        </div>
-        <p><strong>Solution:</strong> Verify Docker is running and you have 5+ GB of disk space. Clean up old images:</p>
+        <h3>Slow startup</h3>
+        <p><strong>Problem:</strong> Installation takes more than 5 minutes</p>
+        <p><strong>Solution:</strong> This is normal on first run. Docker is downloading the vulnerability database (~200 MB). Check progress:</p>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>docker system prune -a</code></pre>
-        </div>
-
-        <h3>Health check failed / service won't start</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><code>unhealthy (exit 1)</code></div>
-        </div>
-        <p><strong>Solution:</strong> Check the service logs:</p>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>docker compose logs backend
-docker compose logs postgres</code></pre>
-        </div>
-
-        <h3>First run is very slow (>5 minutes)</h3>
-        <div class="callout tip">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <div><p>The Trivy vulnerability database is downloading on first run (~200 MB). Subsequent runs are fast.</p></div>
-        </div>
-        <p><strong>Solution:</strong> Wait for the database to download. Monitor progress:</p>
-        <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
+          <div class="code-title"><span class="dot"></span>All platforms</div>
           <pre><code>docker compose logs backend | grep -i trivy</code></pre>
         </div>
 
-        <h3>Can't connect to http://localhost:5173</h3>
-        <div class="callout warn">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
-          <div><p>Frontend not responding</p></div>
-        </div>
-        <p><strong>Solution:</strong> Verify the frontend container is healthy:</p>
+        <h3>Can't access http://localhost:5173</h3>
+        <p><strong>Problem:</strong> Browser shows connection error</p>
+        <p><strong>Solution:</strong> Check if containers are running:</p>
         <div class="code-block titled">
-          <div class="code-title"><span class="dot"></span>Terminal</div>
-          <pre><code>docker compose ps frontend
-docker compose logs frontend</code></pre>
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>docker compose ps</code></pre>
         </div>
 
-        <div class="callout">
-          <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-          <div><p><strong>Need more help?</strong> See <a href="faq.html#troubleshooting">FAQ & Troubleshooting</a> or open an issue on <a href="https://github.com/cra-norm-engine/crane/issues">GitHub</a>.</p></div>
+        <p>All services should show <code>running</code>. If not, check logs:</p>
+        <div class="code-block titled">
+          <div class="code-title"><span class="dot"></span>All platforms</div>
+          <pre><code>docker compose logs</code></pre>
         </div>
+
+        <h3>Login credentials don't work</h3>
+        <p><strong>Problem:</strong> Email and password rejected</p>
+        <p><strong>Solution:</strong> The app might still be initializing. Wait 1-2 minutes and refresh the browser. If still not working, check backend logs for errors.</p>
 
         <hr>
 
-        <div class="card-grid">
-          <a class="card" href="configuration.html"><h3>Configuration & Deployment →</h3><p>Docker services, environment variables, LDAP, backups.</p></a>
-          <a class="card" href="quickstart.html"><h3>Quick Start →</h3><p>Fast one-liner installer for development.</p></a>
-          <a class="card" href="concepts.html"><h3>Core Concepts →</h3><p>Architecture and terminology.</p></a>
-        </div>
+        <h2>Development vs. Production</h2>
+
+        <p><strong>This guide covers local development</strong> (your machine, localhost). For production deployment, you need additional setup.</p>
+
+        <h3>Development (What You Just Did)</h3>
+        <ul>
+          <li>✓ Running locally on your machine</li>
+          <li>✓ Not exposed to the internet</li>
+          <li>✓ Using default credentials</li>
+          <li>✓ Testing and exploration</li>
+        </ul>
+
+        <h3>Production (See Configuration Guide)</h3>
+        <ul>
+          <li>✗ Accessible over the internet</li>
+          <li>✗ Requires TLS/HTTPS</li>
+          <li>✗ Needs reverse proxy (nginx, Caddy)</li>
+          <li>✗ Strong database passwords</li>
+          <li>✗ Regular backups</li>
+          <li>✗ LDAP/Active Directory integration (optional)</li>
+        </ul>
+
+        <p><strong>To deploy to production:</strong> Read <a href="configuration.html">Configuration & Deployment</a>.</p>
+
+        <hr>
+
+        <h2>Next Steps</h2>
+        <ul>
+          <li>✓ You now have CRANE running locally</li>
+          <li>Log in with the credentials above</li>
+          <li>Explore the app and try creating a product</li>
+          <li>Check the <a href="faq.html">FAQ</a> for common questions</li>
+          <li>See <a href="configuration.html">Configuration & Deployment</a> when you're ready for production</li>
+        </ul>
+
       </article>
     </main>
   </div>
 
-  <script>window.CRANE_PAGE = "installation.html";</script>
   <script src="assets/docs.js"></script>
+  <script>window.CRANE_PAGE = "installation.html";</script>
 </body>
 </html>
