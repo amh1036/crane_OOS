@@ -144,11 +144,15 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Documentation
 
-**Getting started quickly:**
+**Installation guides:**
 
-- 🚀 [Interactive Tabbed Installation Guide](docs/installation-tabbed.html) — **Recommended!** Step-by-step with tabs for each OS
-- 📄 [Markdown Installation Guide](INSTALLATION.md) — Alternative markdown format for quick reference
-- 📖 [Full Documentation Site](https://cra-norm-engine.github.io/crane/) — Complete reference guide
+- 📋 [Installation Guide (Interactive Tabs)](docs/installation-tabbed.html) — Step-by-step with OS-specific tabs
+- 📚 [Comprehensive Guide](docs/installation.html) — Full reference for production deployment
+- 📄 [Markdown Format](INSTALLATION.md) — Read in terminal or GitHub
+
+**Other resources:**
+
+- 🌐 [Full Documentation Site](https://cra-norm-engine.github.io/crane/) — Complete API docs and advanced topics
 
 **Additional resources:**
 
@@ -160,13 +164,29 @@ A training provider running a cybersecurity engineering course uses CRANE to tea
 
 ## Installation
 
-### 📖 Interactive Installation Guide
+### Quick Start
 
-**👉 [Read the Tabbed Installation Guide →](docs/installation-tabbed.html)** ← Best for step-by-step visual setup with tabs for each OS
+**One-liner installation (fully automated):**
 
-Each step has tabs for **Linux**, **macOS**, and **Windows**, making it super clear what to do on your platform.
+```bash
+# Linux / macOS
+curl -fsSL https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.sh | bash
 
-Prefer markdown? **[Read the Markdown Guide →](INSTALLATION.md)**
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/cra-norm-engine/crane/main/install.ps1 | iex
+```
+
+Takes ~2 minutes. First run takes 3-5 minutes to build and download the vulnerability database.
+
+### Detailed Installation
+
+For step-by-step guidance with tabs for your OS, see:
+- **👉 [Installation Guide (Interactive Tabs)](docs/installation-tabbed.html)** — Each step shows Linux, macOS, and Windows instructions
+
+For production deployment, TLS setup, upgrades, and advanced topics, see:
+- **📚 [Comprehensive Guide](docs/installation.html)** — Full reference documentation
+
+**Prefer plain text?** Read [INSTALLATION.md](INSTALLATION.md)
 
 ### Fastest Setup (One-Liner)
 
